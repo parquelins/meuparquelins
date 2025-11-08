@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Condomínio Parque Lins de Vasconcelos</title>
+    <style>
+        :root {
+            --verde-musgo-escuro: #1B3A2D;
+            --verde-musgo-medio: #2E6B4F;
+            --verde-musgo-claro: #A3D9B1;
+            --branco: #FFFFFF;
+            --cinza-claro: #F9FAFB;
+            --cinza-medio: #D1D5DB;
+            --texto-escuro: #1F2937;
+            --menu-bg: #E6F4EA;
+            --menu-hover: #C1E1C1;
+            --degrade-inicio-start: #2E6B4F;
+            --degrade-inicio-end: #A3D9B1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--texto-escuro);
+            background-color: var(--cinza-claro);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--branco);
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .logo-section img {
+            height: 100px;
+            width: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .logo-section img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .logo-section h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--verde-musgo-escuro);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--menu-bg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            margin: 1rem auto 2rem auto;
+            max-width: 1200px;
+            padding: 0 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            display: block;
+            color: var(--verde-musgo-escuro);
+            text-decoration: none;
+            padding: 1rem 1.8rem;
+            transition: background-color 0.3s, color 0.3s;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            box-shadow: inset 0 0 0 0 var(--verde-musgo-escuro);
+            border: 2px solid transparent;
+        }
+
+        nav ul li a:hover,
+        nav ul li a:focus {
+            background-color: var(--menu-hover);
+            color: var(--verde-musgo-escuro);
+            box-shadow: 0 6px 15px rgba(46, 107, 79, 0.4);
+            border-color: var(--verde-musgo-medio);
+        }
+
+        nav ul li a.active {
+            background-color: var(--verde-musgo-medio);
+            color: var(--branco);
+            box-shadow: 0 6px 20px rgba(46, 107, 79, 0.6);
+            border-color: var(--verde-musgo-medio);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--branco);
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        section:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);\n        }
+
+        section h2 {
+            color: var(--verde-musgo-escuro);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 4px solid var(--verde-musgo-medio);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        /* Cards */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--cinza-claro);
+            padding: 1.8rem;
+            border-radius: 12px;
+            border-left: 6px solid var(--verde-musgo-medio);
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .card h3 {
+            color: var(--verde-musgo-escuro);
+            margin-bottom: 0.7rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .card p {
+            color: var(--texto-escuro);
+            margin-bottom: 0.7rem;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .card .date {
+            color: var(--verde-musgo-medio);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--degrade-inicio-start) 0%, var(--degrade-inicio-end) 100%);
+            color: var(--branco);
+            text-align: center;
+            padding: 4rem 2rem;
+            border-radius: 16px;
+            margin-bottom: 3rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+            font-weight: 500;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* Contact Form */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.7rem;
+            color: var(--verde-musgo-escuro);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--cinza-medio);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--verde-musgo-medio);
+            box-shadow: 0 0 8px var(--verde-musgo-medio);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 140px;
+        }
+
+        .btn {
+            background-color: var(--verde-musgo-medio);
+            color: var(--branco);
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 12px rgba(46, 107, 79, 0.5);
+        }
+
+        .btn:hover {
+            background-color: var(--verde-musgo-escuro);
+            box-shadow: 0 6px 18px rgba(27, 58, 45, 0.7);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--verde-musgo-escuro);
+            color: var(--branco);
+            text-align: center;
+            padding: 2rem 20px;
+            margin-top: 3rem;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo-section {
+                flex-direction: column;
+                margin-bottom: 1rem;
+            }
+
+            .logo-section h1 {
+                font-size: 1.6rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+            }
+
+            nav ul li a {
+                padding: 0.8rem 1rem;
+                font-size: 1.1rem;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 1rem 0;
+            }
+        }
+
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-2 {
+            margin-top: 2rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="https://cdn.abacus.ai/images/ca8ad4ba-c6b4-45a6-b78e-fafb406f6229.png" alt="Logo Condomínio Parque Lins">
+                <h1>Condomínio Parque Lins de Vasconcelos</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#inicio" class="active">Início</a></li>
+            <li><a href="#avisos">Avisos</a></li>
+            <li><a href="#bazar">Bazar</a></li>
+            <li><a href="#prestadores">Prestadores</a></li>
+            <li><a href="#eventos">Eventos</a></li>
+            <li><a href="#regras">Regras</a></li>
+            <li><a href="#contato">Contato</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section id="inicio" class="hero">
+            <h2>Bem-vindo ao Portal do Condomínio</h2>
+            <p>Seu espaço de comunicação, informação e convivência. Aqui você encontra avisos importantes, eventos, serviços e muito mais!</p>
+        </section>
+
+        <!-- Avisos e Comunicados -->
+        <section id="avisos">
+            <h2>📢 Avisos e Comunicados</h2>
+            <div class="cards-container">
+                <div class="card">
+                    <span class="date">08/11/2025</span>
+                    <h3>Manutenção do Elevador</h3>
+                    <p>Informamos que o elevador do Bloco A passará por manutenção preventiva no dia 15/11, das 8h às 12h. Pedimos a compreensão de todos.</p>
+                </div>
+                <div class="card">
+                    <span class="date">05/11/2025</span>
+                    <h3>Limpeza da Caixa d'Água</h3>
+                    <p>A limpeza da caixa d'água está agendada para o dia 20/11. Haverá interrupção no fornecimento de água das 9h às 14h.</p>
+                </div>
+                <div class="card">
+                    <span class="date">01/11/2025</span>
+                    <h3>Horário da Portaria</h3>
+                    <p>Lembramos que a portaria funciona 24h. Para entregas após as 22h, favor avisar com antecedência.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bazar / Doações -->
+        <section id="bazar">
+            <h2>🛍️ Bazar e Doações</h2>
+            <p>Espaço para moradores anunciarem itens para venda, troca ou doação. Entre em contato diretamente com o morador interessado.</p>
+            <div class="cards-container">
+                <div class="card">
+                    <h3>Sofá 3 lugares - R$ 400</h3>
+                    <p><strong>Morador:</strong> Apto 201 - Bloco B</p>
+                    <p>Sofá em bom estado, cor cinza. Contato: (21) 98765-4321</p>
+                </div>
+                <div class="card">
+                    <h3>Bicicleta infantil - DOAÇÃO</h3>
+                    <p><strong>Morador:</strong> Apto 305 - Bloco A</p>
+                    <p>Bicicleta aro 16, rosa, em ótimo estado. Contato: (21) 91234-5678</p>
+                </div>
+                <div class="card">
+                    <h3>Livros diversos - TROCA</h3>
+                    <p><strong>Morador:</strong> Apto 102 - Bloco C</p>
+                    <p>Coleção de livros de ficção. Aceito trocas por outros gêneros. Contato: (21) 99876-5432</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prestadores de Serviço -->
+        <section id="prestadores">
+            <h2>🔧 Prestadores de Serviço</h2>
+            <p>Lista de prestadores de serviço recomendados pelos moradores do condomínio.</p>
+            <div class="cards-container">
+                <div class="card">
+                    <h3>Encanador - João Silva</h3>
+                    <p><strong>Serviços:</strong> Reparos hidráulicos, instalações, desentupimentos</p>
+                    <p><strong>Contato:</strong> (21) 98888-1111</p>
+                    <p><strong>Recomendado por:</strong> Apto 401 - Bloco A</p>
+                </div>
+                <div class="card">
+                    <h3>Eletricista - Carlos Mendes</h3>
+                    <p><strong>Serviços:</strong> Instalações elétricas, manutenção, troca de chuveiros</p>
+                    <p><strong>Contato:</strong> (21) 97777-2222</p>
+                    <p><strong>Recomendado por:</strong> Apto 203 - Bloco B</p>
+                </div>
+                <div class="card">
+                    <h3>Diarista - Maria Santos</h3>
+                    <p><strong>Serviços:</strong> Limpeza residencial, passadoria</p>
+                    <p><strong>Contato:</strong> (21) 96666-3333</p>
+                    <p><strong>Recomendado por:</strong> Apto 104 - Bloco C</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Eventos -->
+        <section id="eventos">
+            <h2>🎉 Eventos</h2>
+            <div class="cards-container">
+                <div class="card">
+                    <span class="date">25/12/2025</span>
+                    <h3>Festa de Natal</h3>
+                    <p>Confraternização de fim de ano no salão de festas. Haverá amigo secreto (limite R$ 50) e ceia compartilhada. Inscrições até 15/12.</p>
+                </div>
+                <div class="card">
+                    <span class="date">12/10/2025</span>
+                    <h3>Dia das Crianças</h3>
+                    <p>Recreação infantil na área de lazer com brinquedos infláveis, pipoca e algodão doce. Das 14h às 18h. Entrada gratuita!</p>
+                </div>
+                <div class="card">
+                    <span class="date">Todo sábado</span>
+                    <h3>Aula de Yoga</h3>
+                    <p>Aulas gratuitas de yoga no jardim do condomínio, todos os sábados às 8h. Traga seu tapete!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Regras do Condomínio -->
+        <section id="regras">
+            <h2>📋 Regras do Condomínio</h2>
+            <div class="card">
+                <h3>Horário de Silêncio</h3>
+                <p>Das 22h às 8h nos dias de semana e das 23h às 9h nos finais de semana. Respeite o descanso dos vizinhos.</p>
+            </div>
+            <div class="card mt-2">
+                <h3>Uso das Áreas Comuns</h3>
+                <p>O salão de festas deve ser reservado com 15 dias de antecedência. A churrasqueira é de uso livre, mas deve ser limpa após o uso.</p>
+            </div>
+            <div class="card mt-2">
+                <h3>Animais de Estimação</h3>
+                <p>Animais devem circular nas áreas comuns sempre com coleira e guia. Os donos são responsáveis pela limpeza.</p>
+            </div>
+            <div class="card mt-2">
+                <h3>Estacionamento</h3>
+                <p>Cada apartamento tem direito a 1 vaga fixa. Vagas de visitantes são por ordem de chegada e limitadas a 4 horas.</p>
+            </div>
+            <div class="card mt-2">
+                <h3>Descarte de Lixo</h3>
+                <p>O lixo deve ser descartado nos horários de coleta: segunda, quarta e sexta às 19h. Lixo reciclável: terças e quintas.</p>
+            </div>
+        </section>
+
+        <!-- Contato / Síndico -->
+        <section id="contato">
+            <h2>📞 Contato e Síndico</h2>
+            <div class="contact-form">
+                <p style="text-align: center; margin-bottom: 2rem;">
+                    <strong>Síndico:</strong> José Carlos Oliveira<br>
+                    <strong>Telefone:</strong> (21) 99999-0000<br>
+                    <strong>E-mail:</strong> sindico@parquelins.com.br<br>
+                    <strong>Horário de atendimento:</strong> Segunda a sexta, 9h às 18h
+                </p>
+
+                <h3 style="color: var(--verde-musgo-escuro); margin-bottom: 1rem; text-align: center;">Envie sua mensagem</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="nome">Nome completo</label>
+                        <input type="text" id="nome" name="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apartamento">Apartamento</label>
+                        <input type="text" id="apartamento" name="apartamento" placeholder="Ex: 201 - Bloco A" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefone">Telefone</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="(21) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label for="mensagem">Mensagem</label>
+                        <textarea id="mensagem" name="mensagem" required></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn">Enviar Mensagem</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p><strong>Condomínio Residencial Parque Lins de Vasconcelos</strong></p>
+        <p>Rua Exemplo, 123 - Lins de Vasconcelos - Rio de Janeiro/RJ</p>
+        <p>© 2025 - Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+        // Smooth scroll para links de navegação
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Prevenir envio do formulário (já que é apenas demonstração)
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Este é um site de demonstração. Em um site real, sua mensagem seria enviada ao síndico.');
+        });
+    </script>
+</body>
+</html>
