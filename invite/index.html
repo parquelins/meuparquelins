@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aceitar Convite — Parque Lins</title>
+  <style>
+    body{font-family:Arial, Helvetica, sans-serif;background:#f3f6f5;margin:0;display:flex;align-items:center;justify-content:center;height:100vh}
+    .card{background:#fff;padding:28px;border-radius:10px;max-width:520px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,0.08)}
+    h1{margin:0 0 12px;color:#1b3a2d}
+    p{color:#31474a;margin-bottom:18px}
+    .note{color:#6b7e7a;font-size:0.9rem}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Confirme sua conta</h1>
+    <p>Se você recebeu um convite por e‑mail, use o formulário abaixo para definir sua senha e acessar o painel.</p>
+    <div id="netlify-identity-root"></div>
+    <p class="note">Se o link do convite não abrir corretamente, copie o link do e‑mail e cole aqui na barra do navegador (abra em modo anônimo se tiver outras contas Netlify/GitHub ativas).</p>
+  </div>
+
+  <!-- Netlify Identity widget -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script>
+    // Inicializa o widget (ele detecta tokens #invite_token= automaticamente)
+    if (window.netlifyIdentity) {
+      netlifyIdentity.on('init', user => {});
+      netlifyIdentity.init();
+    } else {
+      console.warn('Netlify Identity widget não carregou.');
+    }
+  </script>
+</body>
+</html>
