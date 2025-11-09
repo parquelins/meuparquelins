@@ -1,30 +1,29 @@
 backend:
   name: git-gateway
-  branch: main # Certifique-se de que esta é a branch principal do seu repositório (main ou master)
+  branch: main
 
-media_folder: "assets/uploads" # Onde as imagens serão salvas no seu repositório
-public_folder: "/assets/uploads" # Caminho público para as imagens
+media_folder: "static/uploads"    # onde os arquivos ficarão no repositório
+public_folder: "/uploads"         # caminho público no site
 
-publish_mode: editorial_workflow # Permite que admins revisem e aprovem posts
+publish_mode: editorial_workflow  # opcional: permite workflow de revisão
 
+# Se você usa Cloudinary, mantenha media_library; senão pode remover esta seção.
 media_library:
   name: cloudinary
   config:
-    cloud_name: "dqdbxtlnf" # Seu Cloud name do Cloudinary
-    upload_preset: "meuparquelins" # Seu upload preset do Cloudinary
+    cloud_name: "dqdbxtlnf"
+    upload_preset: "meuparquelins"
 
 collections:
-  - name: "posts"
+  - name: "avisos"
     label: "Avisos"
-    folder: "content/posts" # Onde os posts serão salvos no seu repositório
+    folder: "content/avisos"     # aqui usamos a pasta que você já criou
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
+      - { label: "Publicado em", name: "date", widget: "datetime", format: "DD/MM/YYYY" }
       - { label: "Título", name: "title", widget: "string" }
-      - { label: "Categoria", name: "category", widget: "select", options: ["Avisos","Bazar","Prestadores","Eventos"] }
-      - { label: "Resumo", name: "summary", widget: "text" }
+      - { label: "Resumo (exibição)", name: "summary", widget: "text" }
+      - { label: "Vídeo (URL YouTube/Vimeo)", name: "video_url", widget: "string", required: false }
+      - { label: "Imagens (upload)", name: "image", widget: "image", multiple: true, required: false }
       - { label: "Conteúdo", name: "body", widget: "markdown" }
-      - { label: "Imagens", name: "images", widget: "list", field: { label: "Imagem", name: "image", widget: "image" } }
-      - { label: "Vídeo (URL YouTube/Vimeo)", name: "video", widget: "string", required: false }
-      - { label: "Autor", name: "author", widget: "string", required: false }
-      - { label: "Aprovado", name: "approved", widget: "boolean", default: false, required: false }
