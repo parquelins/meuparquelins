@@ -20,16 +20,49 @@
     <p class="note">Se o link do convite não abrir corretamente, copie o link do e‑mail e cole aqui na barra do navegador (abra em modo anônimo se tiver outras contas Netlify/GitHub ativas).</p>
   </div>
 
-  <!-- Netlify Identity widget -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <!-- Carrega e inicializa o widget do Netlify Identity.
+       Primeiro movemos ?invite_token=XYZ para #invite_token=XYZ para o widget reconhecer. -->
   <script>
-    // Inicializa o widget (ele detecta tokens #invite_token= automaticamente)
-    if (window.netlifyIdentity) {
-      netlifyIdentity.on('init', user => {});
-      netlifyIdentity.init();
-    } else {
-      console.warn('Netlify Identity widget não carregou.');
-    }
+    (function(){
+      try {
+        // Pega token da query string se existir
+        const params = new URLSearchParams(window.location.search);
+        const qToken = params.get('invite_token');
+
+        // Se vier no hash já (ex.: #invite_token=...) não precisa mover
+        const hashHasToken = window.location.hash && window.location.hash.includes('invite_token=');
+
+        if (qToken && !hashHasToken) {
+          // Reconstrói a URL com o hash e substitui (sem criar novo histórico)
+          const newHash = 'invite_token=' + encodeURIComponent(qToken);
+          const newUrl = window.location.pathname + window.location.search + '#' + newHash;
+          // faz reload com o hash correto para o widget detectar
+          window.location.replace(newUrl);
+          return; // interrompe execução para evitar inicializar sem token
+        }
+      } catch (e) {
+        console.warn('Erro ao processar token:', e);
+      }
+
+      // Função para carregar o script do widget se necessário e inicializar
+      function initWidget() {
+        if (window.netlifyIdentity) {
+          try { netlifyIdentity.init(); } catch(e){ console.warn(e); }
+          return;
+        }
+        var s = document.createElement('script');
+        s.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
+        s.onload = function(){ try { netlifyIdentity.init(); } catch(e){ console.warn(e); } };
+        document.body.appendChild(s);
+      }
+
+      // Inicializa depois do load para garantir que a URL (com hash) esteja correta
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        initWidget();
+      } else {
+        window.addEventListener('DOMContentLoaded', initWidget);
+      }
+    })();
   </script>
 </body>
 </html>
