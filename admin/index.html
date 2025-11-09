@@ -1,30 +1,12 @@
-backend:
-  name: git-gateway
-  branch: main # Certifique-se de que esta é a branch principal do seu repositório (main ou master)
-
-media_folder: "assets/uploads" # Onde as imagens serão salvas no seu repositório
-public_folder: "/assets/uploads" # Caminho público para as imagens
-
-publish_mode: editorial_workflow # Permite que admins revisem e aprovem posts
-
-media_library:
-  name: cloudinary
-  config:
-    cloud_name: "dqdbxtlnf" # Seu Cloud name do Cloudinary
-    upload_preset: "meuparquelins" # Seu upload preset do Cloudinary
-
-collections:
-  - name: "posts"
-    label: "Avisos"
-    folder: "content/posts" # Onde os posts serão salvos no seu repositório
-    create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    fields:
-      - { label: "Título", name: "title", widget: "string" }
-      - { label: "Categoria", name: "category", widget: "select", options: ["Avisos","Bazar","Prestadores","Eventos"] }
-      - { label: "Resumo", name: "summary", widget: "text" }
-      - { label: "Conteúdo", name: "body", widget: "markdown" }
-      - { label: "Imagens", name: "images", widget: "list", field: { label: "Imagem", name: "image", widget: "image" } }
-      - { label: "Vídeo (URL YouTube/Vimeo)", name: "video", widget: "string", required: false }
-      - { label: "Autor", name: "author", widget: "string", required: false }
-      - { label: "Aprovado", name: "approved", widget: "boolean", default: false, required: false }
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Admin - Netlify CMS</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+  </head>
+  <body>
+    <!-- Netlify CMS root - carrega o app do Netlify CMS -->
+    <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+  </body>
+</html>
