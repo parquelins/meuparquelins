@@ -23,6 +23,5 @@ collections:
         allow_multiple: false
         media_folder: "content/videos"
         public_folder: "/content/videos"
-      - { label: "Vídeo (URL YouTube/Vimeo)", name: "video_url", widget: "string", required: false }
       - { label: "Imagens (upload)", name: "image", widget: "image", multiple: true, required: false }
       - { label: "Conteúdo", name: "body", widget: "markdown" }
