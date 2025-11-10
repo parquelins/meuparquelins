@@ -166,234 +166,157 @@
     <p>© 2025 - Todos os direitos reservados</p>
   </footer>
 
-<!-- Biblioteca para converter Markdown -->
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<!-- NETLIFY IDENTITY WIDGET (mantemos por compatibilidade, mas está oculto) -->
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <!-- Biblioteca para converter Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-<script>
-  // CONFIG DO REPO
-  const OWNER = 'parquelins';
-  const REPO  = 'meuparquelins';
-  const BRANCH = 'main';
+  <!-- NETLIFY IDENTITY WIDGET (obrigatório para login) -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-  // helper
-  function escapeRegExp(s){ return (s||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+  <script>
+    // Config do repositório (usado pelo script que carrega os avisos)
+    const OWNER = 'parquelins';
+    const REPO  = 'meuparquelins';
+    const BRANCH = 'main';
+    const CONTENT_PATH = 'content/avisos';
 
-  // busca lista de md em uma pasta (collection)
-  async function listaCollection(collectionPath){
-    const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${collectionPath}?ref=${BRANCH}`;
-    const res = await fetch(api);
-    if(!res.ok) return [];
-    const data = await res.json();
-    return data.filter(item => item.name.endsWith('.md')).sort((a,b)=> b.name.localeCompare(a.name));
-  }
-
-  // baixa md via download_url
-  async function buscaMarkdown(download_url){
-    const res = await fetch(download_url);
-    if(!res.ok) return '';
-    return await res.text();
-  }
-
-  // parse simples de frontmatter (YAML básico)
-  function parseFrontmatter(md){
-    const fmRegex = /^---\s*[\r\n]+([\s\S]*?)\r?\n---\s*[\r\n]*(.*)$/;
-    const m = md.match(fmRegex);
-    if(!m) return { data:{}, body: md || '' };
-  function parseFrontmatter(md) {
-  // Segurança: entrada vazia
-  if (!md) return { data: {}, body: '' };
-  // remover BOM se houver
-  md = md.replace(/^\uFEFF/, '');
-
-  // 1) tentativa padrão: frontmatter entre --- ... ---
-  const fmDash = /^---\s*[\r\n]+([\s\S]*?)\r?\n---\s*[\r\n]*(.*)$/;
-  let m = md.match(fmDash);
-  if (m) {
-    const lines = m[1].split(/\r?\n/);
-    const data = {};
-    for(const line of lines){
-    for (const line of lines) {
-      const idx = line.indexOf(':');
-      if(idx === -1) continue;
-      if (idx === -1) continue;
-      const k = line.slice(0, idx).trim();
-      let v = line.slice(idx+1).trim();
-      if(/^"(.*)"$/.test(v) || /^'(.*)'$/.test(v)) v = v.slice(1,-1);
-      let v = line.slice(idx + 1).trim();
-      if (/^"(.*)"$/.test(v) || /^'(.*)'$/.test(v)) v = v.slice(1, -1);
-      data[k] = v;
-    }
-    return { data, body: m[2] || '' };
-  }
-
-  // 2) fallback tolerante: aceitar frontmatter sem os ---,
-  //    quando o começo do arquivo tem várias linhas "chave: valor"
-  const lines = md.split(/\r?\n/);
-  const data = {};
-  let i = 0;
-  let sawKV = false;
-  for (; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (line === '') { // considera separador entre bloco de metadata e corpo
-      i++;
-      break;
-    }
-    if (/^[A-Za-z0-9_-]+:\s*(.+)$/.test(line)) {
-      sawKV = true;
-      const idx = line.indexOf(':');
-      const k = line.slice(0, idx).trim();
-      let v = line.slice(idx + 1).trim();
-      if (/^"(.*)"$/.test(v) || /^'(.*)'$/.test(v)) v = v.slice(1, -1);
-      data[k] = v;
-    } else {
-      sawKV = false;
-      break;
-    }
-  }
-  if (sawKV) {
-    const body = lines.slice(i).join('\n');
-    return { data, body };
-  }
-
-  // 3) nada encontrado: retorna todo o arquivo como body
-  return { data: {}, body: md };
-}
-
-  // renderiza mídias (imagens, youtube, vimeo, mp4)
-  function renderMedia(front){
-    let html = '';
-    // imagens via frontmatter
-    if(front.data && front.data.image){
-      const imgs = Array.isArray(front.data.image) ? front.data.image : [front.data.image];
-      imgs.forEach(src => {
-        if(!src) return;
-        html += `<img src="${src}" alt="" style="max-width:100%;margin-bottom:10px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06);" />`;
-      });
-    } else {
-      // tentativa de achar uploads no corpo
-      const matches = (front.body.match(/\/uploads\/[^\s)"]+/g) || []);
-      matches.forEach(m => {
-        html += `<img src="${m}" style="max-width:100%;margin-bottom:10px;border-radius:8px;" />`;
-      });
+    // helper para regex
+    function escapeRegExp(s) {
+      return s.replace(/[.*+?^${}()|[\\\]\\]/g, '\\$&');
     }
 
-    const videoUrl = front.data && (front.data.video_url || front.data.video) ? (front.data.video_url || front.data.video).trim() : '';
-    if(videoUrl){
-      const yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/);
-      if(yt && yt[1]){
-        html += `<div style="margin-top:12px"><iframe src="https://www.youtube.com/embed/${yt[1]}" style="width:100%;max-width:900px;height:400px;border-radius:8px;" frameborder="0" allowfullscreen></iframe></div>`;
+    // Busca lista de arquivos markdown na pasta
+    async function listaAvisos() {
+      const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${CONTENT_PATH}?ref=${BRANCH}`;
+      const res = await fetch(api);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.filter(item => item.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name));
+    }
+    async function buscaMarkdown(download_url) {
+      const res = await fetch(download_url);
+      if (!res.ok) return '';
+      return await res.text();
+    }
+    function parseFrontmatter(md) {
+      const fmRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
+      const m = md.match(fmRegex);
+      if (!m) return { data: {}, body: md };
+      const lines = m[1].split(/\r?\n/);
+      const data = {};
+      for (const line of lines) {
+        const [k, ...rest] = line.split(':');
+        if(!k) continue;
+        let v = rest.join(':').trim();
+        v = v.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
+        data[k.trim()] = v;
+      }
+      return { data, body: m[2] };
+    }
+
+    // NOVA renderMedia: não exibe links de vídeo, só o player
+    function renderMedia(front) {
+      let html = '';
+      // imagens (mantemos o comportamento anterior)
+      if (front.data && front.data.image) {
+        const imgs = Array.isArray(front.data.image) ? front.data.image : [front.data.image];
+        imgs.forEach(src => {
+          if (!src) return;
+          html += `<img src="${src}" alt="" style="max-width:100%;margin-bottom:10px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06);" />`;
+        });
       } else {
-        const vm = videoUrl.match(/vimeo\.com\/(\d+)/);
-        if(vm && vm[1]){
-          html += `<div style="margin-top:12px"><iframe src="https://player.vimeo.com/video/${vm[1]}" style="width:100%;max-width:900px;height:400px;border-radius:8px;" frameborder="0" allowfullscreen></iframe></div>`;
+        const matches = (front.body.match(/\/uploads\/[^\s)"]+/g) || []);
+        matches.forEach(m => {
+          html += `<img src="${m}" style="max-width:100%;margin-bottom:10px;border-radius:8px;" />`;
+        });
+      }
+
+      // vídeo: preferir frontmatter (video_url ou video)
+      const videoUrl = front.data && (front.data.video_url || front.data.video) ? (front.data.video_url || front.data.video) : '';
+      if (videoUrl) {
+        // se for YouTube ou Vimeo, usa iframe, senão usa player <video>
+        let yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/);
+        if (yt && yt[1]) {
+          html += `<div style="margin-top:12px"><iframe src="https://www.youtube.com/embed/${yt[1]}" style="width:100%;max-width:900px;height:400px;border-radius:8px;" frameborder="0" allowfullscreen></iframe></div>`;
         } else {
-          // player mp4
-          html += `
-            <div style="margin-top:12px;max-width:900px;">
-              <video controls preload="none" style="width:100%;height:auto;background:#000;border-radius:6px;">
-                <source src="${videoUrl}" type="video/mp4">
-                Seu navegador não suporta vídeo.
-              </video>
-            </div>`;
+          let vm = videoUrl.match(/vimeo\.com\/(\d+)/);
+          if (vm && vm[1]) {
+            html += `<div style="margin-top:12px"><iframe src="https://player.vimeo.com/video/${vm[1]}" style="width:100%;max-width:900px;height:400px;border-radius:8px;" frameborder="0" allowfullscreen></iframe></div>`;
+          } else {
+            // usa player <video> direto (sem exibir URL/texto)
+            html += `
+              <div style="margin-top:12px;max-width:900px;">
+                <video controls preload="none" style="width:100%;height:auto;background:#000;border-radius:6px;">
+                  <source src="${videoUrl}" type="video/mp4">
+                  Seu navegador não suporta vídeo.
+                </video>
+              </div>`;
+          }
         }
       }
+
+      return html;
     }
-    return html;
-  }
 
-  // pega as primeiras 3 linhas significativas do corpo para resumo
-  function resumoDasPrimeirasLinhas(body, maxLines = 3){
-    if(!body) return '';
-    const lines = body.split(/\r?\n/).map(l => l.trim()).filter(l => l.length);
-    return lines.slice(0, maxLines).join(' ') + (lines.length > maxLines ? '...' : '');
-  }
-
-  // função genérica que carrega uma collection para um seletor da página
-  async function carregarCollection(collectionPath, sectionSelector){
-    const container = document.querySelector(sectionSelector + ' .cards');
-    if(!container) return;
-    container.innerHTML = '<p>Carregando...</p>';
-    try {
-      const files = await listaCollection(collectionPath);
-      if(!files.length){ container.innerHTML = '<p>Nenhum item encontrado.</p>'; return; }
-      container.innerHTML = '';
-      for(const file of files){
-        const md = await buscaMarkdown(file.download_url);
-        const parsed = parseFrontmatter(md);
-        const title = parsed.data.title || file.name.replace('.md','');
-        const date  = parsed.data.date || parsed.data.data || '';
-        const summary = parsed.data.summary || resumoDasPrimeirasLinhas(parsed.body, 3) || (parsed.body.substring(0,160) + '...');
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `<span class="date">${date}</span><h3>${title}</h3><p>${summary}</p>
-          <p style="margin-top:8px"><a href="#" data-file="${file.download_url}" class="btn btn-small">Ver aviso</a></p>`;
-        container.appendChild(card);
-      }
-
-      // listener (event delegation)
-      container.querySelectorAll('a[data-file]').forEach(a => {
-        a.addEventListener('click', async (e) => {
-          e.preventDefault();
-          const dl = e.currentTarget.getAttribute('data-file');
-          const md = await buscaMarkdown(dl);
+    async function carregarAvisosNaPagina() {
+      const cardsContainer = document.querySelector('#avisos .cards');
+      if (!cardsContainer) return;
+      cardsContainer.innerHTML = '<p>Carregando avisos...</p>';
+      try {
+        const files = await listaAvisos();
+        if (!files.length) { cardsContainer.innerHTML = '<p>Nenhum aviso encontrado.</p>'; return; }
+        cardsContainer.innerHTML = '';
+        for (const file of files) {
+          const md = await buscaMarkdown(file.download_url);
           const parsed = parseFrontmatter(md);
+          const title = parsed.data.title || file.name.replace('.md','');
+          const date = parsed.data.date || '';
+          const summary = parsed.data.summary || (parsed.body.substring(0,160) + '...');
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `<span class="date">${date}</span><h3>${title}</h3><p>${summary}</p><p style="margin-top:8px"><a href="#" data-file="${file.download_url}" class="btn btn-small">Ver aviso</a></p>`;
+          cardsContainer.appendChild(card);
+        }
 
-          // limpar do body possíveis links/nome do arquivo de vídeo
-          const videoUrl = parsed.data && (parsed.data.video || parsed.data.video_url) ? (parsed.data.video || parsed.data.video_url).trim() : '';
-          if(videoUrl && parsed.body){
-            const filename = videoUrl.split('/').pop();
-            const reExact = new RegExp('\\[[^\\]]*\\]\\(\\s*' + escapeRegExp(videoUrl) + '\\s*\\)', 'g');
-            parsed.body = parsed.body.replace(reExact, '');
-            const reFile = new RegExp('\\[[^\\]]*\\]\\([^)]*' + escapeRegExp(filename) + '[^)]*\\)', 'g');
-            parsed.body = parsed.body.replace(reFile, '');
-            parsed.body = parsed.body.replace(new RegExp(escapeRegExp(videoUrl), 'g'), '');
-            parsed.body = parsed.body.replace(new RegExp(escapeRegExp(filename), 'g'), '');
-          }
+        // LISTENER ATUALIZADO: limpa links/nomes de arquivo de vídeo do corpo e exibe só o player
+        document.querySelectorAll('a[data-file]').forEach(a => {
+          a.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const dl = e.currentTarget.getAttribute('data-file');
+            const md = await buscaMarkdown(dl);
+            const parsed = parseFrontmatter(md);
 
-          // converte markdown -> html
-          let html = marked.parse(parsed.body || '');
+            // --- REMOVER LINKS/TEXTOS DO CORPO QUE APONTEM PARA O VIDEO ---
+            const videoUrl = parsed.data && (parsed.data.video || parsed.data.video_url) ? (parsed.data.video || parsed.data.video_url).trim() : '';
+            if (videoUrl && parsed.body) {
+              const filename = videoUrl.split('/').pop();
+              // remove links markdown exatos que apontem para a URL do vídeo
+              const reExact = new RegExp('\\[[^\\]]*\\]\\(\\s*' + escapeRegExp(videoUrl) + '\\s*\\)', 'g');
+              parsed.body = parsed.body.replace(reExact, '');
+              // remove links markdown que contenham o nome do arquivo (ex: [texto](...nome.mp4))
+              const reFile = new RegExp('\\[[^\\]]*\\]\\([^)]*' + escapeRegExp(filename) + '[^)]*\\)', 'g');
+              parsed.body = parsed.body.replace(reFile, '');
+              // remove ocorrências diretas da URL ou do filename no body
+              parsed.body = parsed.body.replace(new RegExp(escapeRegExp(videoUrl), 'g'), '');
+              parsed.body = parsed.body.replace(new RegExp(escapeRegExp(filename), 'g'), '');
+            }
+            // --- fim limpeza ---
 
-          // remove <video> e <iframe> que possam ter vindo do md (evita duplicar)
-          html = html.replace(/<video[\s\S]*?<\/video>/gi, '');
-          html = html.replace(/<iframe[\s\S]*?<\/iframe>/gi, '');
-
-          // monta modal: renderMedia(parsed) inclui o player
-          const modal = document.createElement('div');
-          modal.style = 'position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto;background:rgba(0,0,0,0.6);padding:30px;z-index:9999;';
-          modal.innerHTML = `<div style="max-width:900px;margin:0 auto;background:#fff;padding:22px;border-radius:10px;position:relative;">
-            <button id="fechar" style="position:absolute;right:14px;top:14px;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;">Fechar</button>
-            <h2 style="color:#1B3A2D;margin:0">${parsed.data.title || ''}</h2>
-            <p style="color:#2E6B4F;font-weight:700;margin:6px 0 12px 0">${parsed.data.date || ''}</p>
-            <div style="margin-top:12px">${renderMedia(parsed)}${html}</div>
-          </div>`;
-          document.body.appendChild(modal);
-          modal.querySelector('#fechar').addEventListener('click', ()=> modal.remove());
+            const html = marked.parse(parsed.body || '');
+            const modal = document.createElement('div');
+            modal.style = 'position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto;background:rgba(0,0,0,0.6);padding:30px;z-index:9999;';
+            modal.innerHTML = `<div style="max-width:900px;margin:0 auto;background:#fff;padding:22px;border-radius:10px;position:relative;">
+              <button id="fechar" style="position:absolute;right:14px;top:14px;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;">Fechar</button>
+              <h2 style="color:#1B3A2D">${parsed.data.title || ''}</h2>
+              <p style="color:#2E6B4F;font-weight:700">${parsed.data.date || ''}</p>
+              <div style="margin-top:12px">${renderMedia(parsed)}${html}</div>
+            </div>`;
+            document.body.appendChild(modal);
+            modal.querySelector('#fechar').addEventListener('click', () => modal.remove());
+          });
         });
-      });
 
-    } catch(err){
-      console.error(err);
-      container.innerHTML = '<p>Erro ao carregar itens.</p>';
+      } catch (err) { console.error(err); cardsContainer.innerHTML = '<p>Erro ao carregar avisos.</p>'; }
     }
-  }
-
-  // Carrega todas as collections necessárias nas suas seções correspondentes
-  document.addEventListener('DOMContentLoaded', () => {
-    carregarCollection('content/avisos', '#avisos');
-    carregarCollection('content/bazar', '#bazar');
-    carregarCollection('content/prestadores', '#prestadores');
-    carregarCollection('content/eventos', '#eventos');
-    carregarCollection('content/regras', '#regras');
-
-    // mobile nav toggle (mantém seu comportamento)
-    const nav = document.getElementById('site-nav');
-    const toggle = document.getElementById('navToggle');
-    toggle && toggle.addEventListener('click', () => nav.classList.toggle('open'));
-    document.querySelectorAll('.nav ul a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
-  });
-</script>
 
     // CONTROLE DO BOTÃO: usa Netlify Identity
     function updatePublishUI(user) {
