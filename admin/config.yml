@@ -16,7 +16,13 @@ collections:
     fields:
       - { label: "Publicado em", name: "date", widget: "datetime", format: "DD/MM/YYYY" }
       - { label: "Título", name: "title", widget: "string" }
-      - { label: "Resumo (exibição)", name: "summary", widget: "text" }
+      - label: "Vídeo (upload) (opcional)"
+        name: "video_file"
+        widget: "file"
+        required: false
+        allow_multiple: false
+        media_folder: "content/videos"
+        public_folder: "/content/videos"
       - { label: "Vídeo (URL YouTube/Vimeo)", name: "video_url", widget: "string", required: false }
       - { label: "Imagens (upload)", name: "image", widget: "image", multiple: true, required: false }
       - { label: "Conteúdo", name: "body", widget: "markdown" }
