@@ -5,9 +5,6 @@ backend:
 media_folder: "content/images"
 public_folder: "/content/images"
 
-media_folder: "static/uploads"    # onde os arquivos ficarão no repositório
-public_folder: "/uploads"         # caminho público no site
-
 publish_mode: editorial_workflow  # opcional: permite workflow de revisão
 
 collections:
