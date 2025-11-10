@@ -321,9 +321,9 @@
     toggle && toggle.addEventListener('click', () => nav.classList.toggle('open'));
     document.querySelectorAll('.nav ul a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
   </script>
-  <!-- BOTÃO LATERAL HIDDEN - cole antes do </body> -->
+  <!-- BOTÃO LATERAL HIDDEN - substituído -->
 <style>
-/* botão flutuante */
+/* botão flutuante - escondido por padrão */
 #cms-toggle-btn{
   position: fixed;
   right: 16px;
@@ -336,6 +336,7 @@
   box-shadow:0 6px 18px rgba(0,0,0,.12);
   cursor:pointer;
   z-index:9999;
+  display:none; /* ESSE é o ponto: começa escondido */
 }
 #cms-drawer{
   position: fixed;
@@ -364,7 +365,7 @@
   <span class="close" id="cms-close">Fechar ✕</span>
   <h3>Área de publicação</h3>
   <p>Somente administradores podem publicar. Entre para editar:</p>
-  <a class="btn-admin" id="cms-admin-link" href="/admin/">Abrir CMS</a>
+  <a class="btn-admin" id="cms-admin-link" href="/admin/" target="_blank" rel="noopener noreferrer">Abrir CMS</a>
   <hr>
   <p style="font-size:.9em;color:#666">Atalhos:</p>
   <ul style="padding-left:18px;">
@@ -377,24 +378,55 @@
 </div>
 
 <script>
-const btn = document.getElementById('cms-toggle-btn');
-const drawer = document.getElementById('cms-drawer');
-const closeBtn = document.getElementById('cms-close');
-btn.addEventListener('click', ()=> {
-  drawer.classList.toggle('open');
-  drawer.setAttribute('aria-hidden', !drawer.classList.contains('open'));
+/*
+  Lógica:
+  - botão e drawer começam escondidos.
+  - só mostramos se Netlify Identity inicializar e o usuário tiver role 'admin'.
+  - mantemos comportamento de abrir o drawer.
+*/
+
+const cmsBtn = document.getElementById('cms-toggle-btn');
+const cmsDrawer = document.getElementById('cms-drawer');
+const cmsClose = document.getElementById('cms-close');
+
+function openDrawer() {
+  cmsDrawer.classList.toggle('open');
+  cmsDrawer.setAttribute('aria-hidden', !cmsDrawer.classList.contains('open'));
+}
+
+cmsBtn && cmsBtn.addEventListener('click', openDrawer);
+cmsClose && cmsClose.addEventListener('click', () => {
+  cmsDrawer.classList.remove('open');
+  cmsDrawer.setAttribute('aria-hidden', true);
 });
-closeBtn.addEventListener('click', ()=> {
-  drawer.classList.remove('open');
-  drawer.setAttribute('aria-hidden', true);
-});
-// esconder botão para usuários não-logados: se quiser bloquear visualização,
-// é possível checar window.netlifyIdentity.currentUser() e esconder quando null.
-// Exemplo abaixo (opcional)
-if (window.netlifyIdentity && !window.netlifyIdentity.currentUser()) {
-  // se quiser esconder completamente quando não logado, descomente:
-  // btn.style.display = 'none';
+
+// Função que decide mostrar/esconder botão baseado em usuário
+function setCmsVisibilityForUser(user) {
+  if (!cmsBtn) return;
+  if (!user) {
+    cmsBtn.style.display = 'none';
+    cmsDrawer.classList.remove('open');
+    cmsDrawer.setAttribute('aria-hidden', true);
+    return;
+  }
+  const roles = (user && user.app_metadata && user.app_metadata.roles) ? user.app_metadata.roles : [];
+  const isAdmin = roles.includes('admin');
+  if (isAdmin) cmsBtn.style.display = 'block';
+  else cmsBtn.style.display = 'none';
+}
+
+// Inicialização com Netlify Identity (se disponível)
+if (window.netlifyIdentity) {
+  // quando o widget inicializa
+  netlifyIdentity.on('init', user => setCmsVisibilityForUser(user));
+  // login/logout
+  netlifyIdentity.on('login', user => { setCmsVisibilityForUser(user); netlifyIdentity.close(); });
+  netlifyIdentity.on('logout', () => setCmsVisibilityForUser(null));
+  // chama init
+  try { netlifyIdentity.init(); } catch(e){ console.warn('Netlify Identity init failed', e); }
+} else {
+  // se widget não carregou, mantemos escondido (segurança)
+  cmsBtn.style.display = 'none';
 }
 </script>
-</body>
-</html>
+<!-- Fim do bloco do drawer -->
