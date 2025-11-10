@@ -321,5 +321,80 @@
     toggle && toggle.addEventListener('click', () => nav.classList.toggle('open'));
     document.querySelectorAll('.nav ul a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
   </script>
+  <!-- BOTÃO LATERAL HIDDEN - cole antes do </body> -->
+<style>
+/* botão flutuante */
+#cms-toggle-btn{
+  position: fixed;
+  right: 16px;
+  bottom: 80px;
+  background:#fff;
+  border:2px solid #2f6b48;
+  color:#2f6b48;
+  padding:10px 14px;
+  border-radius:8px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+  cursor:pointer;
+  z-index:9999;
+}
+#cms-drawer{
+  position: fixed;
+  right: -320px;
+  top: 0;
+  width: 320px;
+  height: 100%;
+  background: #fff;
+  border-left: 1px solid #e6e6e6;
+  box-shadow: -6px 0 18px rgba(0,0,0,.08);
+  transition: right .28s ease;
+  z-index:9998;
+  padding:18px;
+}
+#cms-drawer.open{ right: 0; }
+#cms-drawer .close{ display:block; margin-bottom:12px; color:#777; cursor:pointer; }
+#cms-drawer a.btn-admin {
+  display:inline-block; margin-top:6px;
+  background:#2f6b48; color:#fff; padding:8px 12px; border-radius:6px; text-decoration:none;
+}
+</style>
+
+<button id="cms-toggle-btn" aria-label="Abrir menu de publicação">Publicar ▸</button>
+
+<div id="cms-drawer" aria-hidden="true">
+  <span class="close" id="cms-close">Fechar ✕</span>
+  <h3>Área de publicação</h3>
+  <p>Somente administradores podem publicar. Entre para editar:</p>
+  <a class="btn-admin" id="cms-admin-link" href="/admin/">Abrir CMS</a>
+  <hr>
+  <p style="font-size:.9em;color:#666">Atalhos:</p>
+  <ul style="padding-left:18px;">
+    <li><a href="/admin/#/collections/avisos">Avisos</a></li>
+    <li><a href="/admin/#/collections/bazar">Bazar</a></li>
+    <li><a href="/admin/#/collections/prestadores">Prestadores</a></li>
+    <li><a href="/admin/#/collections/eventos">Eventos</a></li>
+    <li><a href="/admin/#/collections/regras">Regras</a></li>
+  </ul>
+</div>
+
+<script>
+const btn = document.getElementById('cms-toggle-btn');
+const drawer = document.getElementById('cms-drawer');
+const closeBtn = document.getElementById('cms-close');
+btn.addEventListener('click', ()=> {
+  drawer.classList.toggle('open');
+  drawer.setAttribute('aria-hidden', !drawer.classList.contains('open'));
+});
+closeBtn.addEventListener('click', ()=> {
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden', true);
+});
+// esconder botão para usuários não-logados: se quiser bloquear visualização,
+// é possível checar window.netlifyIdentity.currentUser() e esconder quando null.
+// Exemplo abaixo (opcional)
+if (window.netlifyIdentity && !window.netlifyIdentity.currentUser()) {
+  // se quiser esconder completamente quando não logado, descomente:
+  // btn.style.display = 'none';
+}
+</script>
 </body>
 </html>
