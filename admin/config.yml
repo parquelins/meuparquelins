@@ -10,13 +10,6 @@ public_folder: "/uploads"         # caminho público no site
 
 publish_mode: editorial_workflow  # opcional: permite workflow de revisão
 
-# Se você usa Cloudinary, mantenha media_library; senão pode remover esta seção.
-media_library:
-  name: cloudinary
-  config:
-    cloud_name: "dqdbxtlnf"
-    upload_preset: "meuparquelins"
-
 collections:
   - name: "avisos"
     label: "Avisos"
