@@ -277,44 +277,47 @@
           cardsContainer.appendChild(card);
         }
 
-        // LISTENER ATUALIZADO: limpa links/nomes de arquivo de vídeo do corpo e exibe só o player
-        document.querySelectorAll('a[data-file]').forEach(a => {
-          a.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const dl = e.currentTarget.getAttribute('data-file');
-            const md = await buscaMarkdown(dl);
-            const parsed = parseFrontmatter(md);
+       // LISTENER ATUALIZADO: evita player duplicado removendo <video> / <iframe> do HTML gerado
+document.querySelectorAll('a[data-file]').forEach(a => {
+  a.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const dl = e.currentTarget.getAttribute('data-file');
+    const md = await buscaMarkdown(dl);
+    const parsed = parseFrontmatter(md);
 
-            // --- REMOVER LINKS/TEXTOS DO CORPO QUE APONTEM PARA O VIDEO ---
-            const videoUrl = parsed.data && (parsed.data.video || parsed.data.video_url) ? (parsed.data.video || parsed.data.video_url).trim() : '';
-            if (videoUrl && parsed.body) {
-              const filename = videoUrl.split('/').pop();
-              // remove links markdown exatos que apontem para a URL do vídeo
-              const reExact = new RegExp('\\[[^\\]]*\\]\\(\\s*' + escapeRegExp(videoUrl) + '\\s*\\)', 'g');
-              parsed.body = parsed.body.replace(reExact, '');
-              // remove links markdown que contenham o nome do arquivo (ex: [texto](...nome.mp4))
-              const reFile = new RegExp('\\[[^\\]]*\\]\\([^)]*' + escapeRegExp(filename) + '[^)]*\\)', 'g');
-              parsed.body = parsed.body.replace(reFile, '');
-              // remove ocorrências diretas da URL ou do filename no body
-              parsed.body = parsed.body.replace(new RegExp(escapeRegExp(videoUrl), 'g'), '');
-              parsed.body = parsed.body.replace(new RegExp(escapeRegExp(filename), 'g'), '');
-            }
-            // --- fim limpeza ---
+    // --- REMOVER LINKS/TEXTOS DO CORPO QUE APONTEM PARA O VIDEO ---
+    const videoUrl = parsed.data && (parsed.data.video || parsed.data.video_url) ? (parsed.data.video || parsed.data.video_url).trim() : '';
+    if (videoUrl && parsed.body) {
+      const filename = videoUrl.split('/').pop();
+      const reExact = new RegExp('\\[[^\\]]*\\]\\(\\s*' + escapeRegExp(videoUrl) + '\\s*\\)', 'g');
+      parsed.body = parsed.body.replace(reExact, '');
+      const reFile = new RegExp('\\[[^\\]]*\\]\\([^)]*' + escapeRegExp(filename) + '[^)]*\\)', 'g');
+      parsed.body = parsed.body.replace(reFile, '');
+      parsed.body = parsed.body.replace(new RegExp(escapeRegExp(videoUrl), 'g'), '');
+      parsed.body = parsed.body.replace(new RegExp(escapeRegExp(filename), 'g'), '');
+    }
+    // --- fim limpeza ---
 
-            const html = marked.parse(parsed.body || '');
-            const modal = document.createElement('div');
-            modal.style = 'position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto;background:rgba(0,0,0,0.6);padding:30px;z-index:9999;';
-            modal.innerHTML = `<div style="max-width:900px;margin:0 auto;background:#fff;padding:22px;border-radius:10px;position:relative;">
-              <button id="fechar" style="position:absolute;right:14px;top:14px;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;">Fechar</button>
-              <h2 style="color:#1B3A2D">${parsed.data.title || ''}</h2>
-              <p style="color:#2E6B4F;font-weight:700">${parsed.data.date || ''}</p>
-              <div style="margin-top:12px">${renderMedia(parsed)}${html}</div>
-            </div>`;
-            document.body.appendChild(modal);
-            modal.querySelector('#fechar').addEventListener('click', () => modal.remove());
-          });
-        });
+    // converte markdown -> html
+    let html = marked.parse(parsed.body || '');
 
+    // REMOVE qualquer <video> ou <iframe> que esteja dentro do markdown convertido
+    html = html.replace(/<video[\s\S]*?<\/video>/gi, '');
+    html = html.replace(/<iframe[\s\S]*?<\/iframe>/gi, '');
+
+    // monta modal: renderMedia(parsed) adiciona o player (não colocamos link textual)
+    const modal = document.createElement('div');
+    modal.style = 'position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto;background:rgba(0,0,0,0.6);padding:30px;z-index:9999;';
+    modal.innerHTML = `<div style="max-width:900px;margin:0 auto;background:#fff;padding:22px;border-radius:10px;position:relative;">
+      <button id="fechar" style="position:absolute;right:14px;top:14px;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;">Fechar</button>
+      <h2 style="color:#1B3A2D">${parsed.data.title || ''}</h2>
+      <p style="color:#2E6B4F;font-weight:700">${parsed.data.date || ''}</p>
+      <div style="margin-top:12px">${renderMedia(parsed)}${html}</div>
+    </div>`;
+    document.body.appendChild(modal);
+    modal.querySelector('#fechar').addEventListener('click', () => modal.remove());
+  });
+});
       } catch (err) { console.error(err); cardsContainer.innerHTML = '<p>Erro ao carregar avisos.</p>'; }
     }
 
