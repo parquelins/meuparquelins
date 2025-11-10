@@ -197,22 +197,61 @@
   }
 
   // parse simples de frontmatter (YAML básico)
-  function parseFrontmatter(md){
-    const fmRegex = /^---\s*[\r\n]+([\s\S]*?)\r?\n---\s*[\r\n]*(.*)$/;
-    const m = md.match(fmRegex);
-    if(!m) return { data:{}, body: md || '' };
+  function parseFrontmatter(md) {
+  // Segurança: entrada vazia
+  if (!md) return { data: {}, body: '' };
+  // remover BOM se houver
+  md = md.replace(/^\uFEFF/, '');
+
+  // 1) tentativa padrão: frontmatter entre --- ... ---
+  const fmDash = /^---\s*[\r\n]+([\s\S]*?)\r?\n---\s*[\r\n]*(.*)$/;
+  let m = md.match(fmDash);
+  if (m) {
     const lines = m[1].split(/\r?\n/);
     const data = {};
-    for(const line of lines){
+    for (const line of lines) {
       const idx = line.indexOf(':');
-      if(idx === -1) continue;
+      if (idx === -1) continue;
       const k = line.slice(0, idx).trim();
-      let v = line.slice(idx+1).trim();
-      if(/^"(.*)"$/.test(v) || /^'(.*)'$/.test(v)) v = v.slice(1,-1);
+      let v = line.slice(idx + 1).trim();
+      if (/^"(.*)"$/.test(v) || /^'(.*)'$/.test(v)) v = v.slice(1, -1);
       data[k] = v;
     }
     return { data, body: m[2] || '' };
   }
+
+  // 2) fallback tolerante: aceitar frontmatter sem os ---,
+  //    quando o começo do arquivo tem várias linhas "chave: valor"
+  const lines = md.split(/\r?\n/);
+  const data = {};
+  let i = 0;
+  let sawKV = false;
+  for (; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line === '') { // considera separador entre bloco de metadata e corpo
+      i++;
+      break;
+    }
+    if (/^[A-Za-z0-9_-]+:\s*(.+)$/.test(line)) {
+      sawKV = true;
+      const idx = line.indexOf(':');
+      const k = line.slice(0, idx).trim();
+      let v = line.slice(idx + 1).trim();
+      if (/^"(.*)"$/.test(v) || /^'(.*)'$/.test(v)) v = v.slice(1, -1);
+      data[k] = v;
+    } else {
+      sawKV = false;
+      break;
+    }
+  }
+  if (sawKV) {
+    const body = lines.slice(i).join('\n');
+    return { data, body };
+  }
+
+  // 3) nada encontrado: retorna todo o arquivo como body
+  return { data: {}, body: md };
+}
 
   // renderiza mídias (imagens, youtube, vimeo, mp4)
   function renderMedia(front){
