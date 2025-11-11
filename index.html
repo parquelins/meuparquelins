@@ -184,34 +184,45 @@
       return s.replace(/[.*+?^${}()|[\\\]\\]/g, '\\$&');
     }
 
-    // Busca lista de arquivos markdown na pasta
-    async function listaAvisos() {
-      const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${CONTENT_PATH}?ref=${BRANCH}`;
-      const res = await fetch(api);
-      if (!res.ok) return [];
+    // Lista de avisos: tenta GitHub API e, se falhar (403/404), usa um index.json público no GitHub Pages
+async function listaAvisos() {
+  const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${CONTENT_PATH}?ref=${BRANCH}`;
+  try {
+    const res = await fetch(api);
+    if (res.ok) {
       const data = await res.json();
-      return data.filter(item => item.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name));
+      return data.filter(item => item.name && item.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name));
+    } else {
+      console.warn('GitHub API não retornou OK:', res.status, res.statusText);
+      // fallback para index.json
     }
-    async function buscaMarkdown(download_url) {
-      const res = await fetch(download_url);
-      if (!res.ok) return '';
-      return await res.text();
+  } catch (err) {
+    console.error('Erro chamando GitHub API:', err);
+    // fallback para index.json
+  }
+
+  // --- Fallback: busca um index estático via GitHub Pages (raw), que você cria manualmente em content/avisos/index.json ---
+  try {
+    // URL pública do GitHub Pages para o arquivo index.json
+    const indexUrl = `https://${OWNER}.github.io/${REPO}/content/avisos/index.json`;
+    const r = await fetch(indexUrl);
+    if (!r.ok) {
+      console.warn('Fallback index.json não encontrado:', r.status, r.statusText);
+      return [];
     }
-    function parseFrontmatter(md) {
-      const fmRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-      const m = md.match(fmRegex);
-      if (!m) return { data: {}, body: md };
-      const lines = m[1].split(/\r?\n/);
-      const data = {};
-      for (const line of lines) {
-        const [k, ...rest] = line.split(':');
-        if(!k) continue;
-        let v = rest.join(':').trim();
-        v = v.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
-        data[k.trim()] = v;
-      }
-      return { data, body: m[2] };
-    }
+    const fileNames = await r.json(); // espera um array de nomes de arquivos .md
+    // transforma nomes em objetos similares ao retorno da API (com download_url)
+    return fileNames.map(name => {
+      return {
+        name,
+        download_url: `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/content/avisos/${name}`
+      };
+    }).sort((a,b) => b.name.localeCompare(a.name));
+  } catch (err) {
+    console.error('Erro ao buscar fallback index.json:', err);
+    return [];
+  }
+}
 
     // NOVA renderMedia: não exibe links de vídeo, só o player
     function renderMedia(front) {
