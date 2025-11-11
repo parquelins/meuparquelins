@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Condomínio Parque Lins de Vasconcelos</title>
-
   <style>
     :root{
       --verde-escuro:#1B3A2D;
@@ -22,174 +21,37 @@
       color:var(--texto);
       line-height:1.5;
     }
-
-    /* HEADER */
-    header{
-      background:var(--branco);
-      box-shadow:0 4px 12px rgba(0,0,0,0.06);
-      z-index:999;
-    }
-    .header-content{
-      max-width:1200px;
-      margin:0 auto;
-      padding:12px 20px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .logo-row{
-      display:flex;
-      align-items:center;
-      gap:16px;
-    }
-    .logo-row img{
-      height:78px; width:auto; border-radius:10px;
-      transition:transform .2s;
-      box-shadow:0 6px 16px rgba(0,0,0,0.12);
-    }
-    .logo-row h1{
-      font-size:1.8rem;
-      color:var(--verde-escuro);
-      font-weight:800;
-      letter-spacing:0.01em;
-    }
-
-    /* NAV */
-    .nav {
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-
-    .nav ul{
-      display:flex;
-      gap:18px;
-      list-style:none;
-      align-items:center;
-    }
-    .nav a{
-      text-decoration:none;
-      color:var(--verde-escuro);
-      font-weight:700;
-      padding:10px 16px;
-      border-radius:10px;
-      transition:background .18s, color .18s;
-    }
+    header{background:var(--branco);box-shadow:0 4px 12px rgba(0,0,0,0.06);z-index:999;}
+    .header-content{max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .logo-row{display:flex;align-items:center;gap:16px;}
+    .logo-row img{height:78px;width:auto;border-radius:10px;transition:transform .2s;box-shadow:0 6px 16px rgba(0,0,0,0.12);}
+    .logo-row h1{font-size:1.8rem;color:var(--verde-escuro);font-weight:800;letter-spacing:0.01em;}
+    .nav {display:flex;align-items:center;gap:12px;}
+    .nav ul{display:flex;gap:18px;list-style:none;align-items:center;}
+    .nav a{text-decoration:none;color:var(--verde-escuro);font-weight:700;padding:10px 16px;border-radius:10px;transition:background .18s, color .18s;}
     .nav a:hover{background:rgba(46,107,79,0.08)}
-
-    /* Hamburger (mobile) */
-    .nav-toggle{
-      display:none;
-      background:transparent;
-      border:0;
-      cursor:pointer;
-      width:44px;
-      height:44px;
-    }
-    .nav-toggle .bar{
-      display:block;
-      height:3px;
-      background:var(--verde-escuro);
-      margin:6px 0;
-      border-radius:3px;
-      transition:transform .2s,opacity .2s;
-    }
-
-    /* HERO */
-    .hero{
-      max-width:1200px;
-      margin:20px auto;
-      padding:36px;
-      border-radius:12px;
-      color:var(--branco);
-      background:linear-gradient(135deg,var(--verde-medio) 0%,var(--verde-claro) 100%);
-      box-shadow:0 10px 30px rgba(0,0,0,0.12);
-    }
-    .hero h2{
-      font-size:2.6rem;
-      margin-bottom:12px;
-      text-shadow:2px 2px 8px rgba(0,0,0,0.18);
-    }
-    .hero p{font-size:1.05rem; max-width:920px; margin:0 auto; font-weight:600}
-
+    .nav-toggle{display:none;background:transparent;border:0;cursor:pointer;width:44px;height:44px;}
+    .nav-toggle .bar{display:block;height:3px;background:var(--verde-escuro);margin:6px 0;border-radius:3px;transition:transform .2s,opacity .2s;}
+    .hero{max-width:1200px;margin:20px auto;padding:36px;border-radius:12px;color:var(--branco);background:linear-gradient(135deg,var(--verde-medio) 0%,var(--verde-claro) 100%);box-shadow:0 10px 30px rgba(0,0,0,0.12);}
+    .hero h2{font-size:2.6rem;margin-bottom:12px;text-shadow:2px 2px 8px rgba(0,0,0,0.18);}
+    .hero p{font-size:1.05rem;max-width:920px;margin:0 auto;font-weight:600}
     main{max-width:1200px;margin:16px auto;padding:0 20px 60px}
-
-    section{
-      background:var(--branco);
-      margin-bottom:18px;
-      padding:18px;
-      border-radius:10px;
-      box-shadow:0 6px 18px rgba(0,0,0,0.06);
-    }
-    section h2{
-      color:var(--verde-escuro); font-size:1.5rem; margin-bottom:8px; font-weight:800;
-      display:flex; align-items:center; gap:12px;
-    }
-
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-      gap:14px;
-      margin-top:12px;
-    }
-    .card{
-      background:#FAFCFB; padding:14px; border-radius:10px;
-      border-left:6px solid var(--verde-medio);
-    }
-    .card h3{margin-bottom:6px; color:var(--verde-escuro); font-size:1.05rem}
-    .card .date{color:var(--verde-medio); font-weight:700; font-size:.95rem}
-
-    /* Contact */
+    section{background:var(--branco);margin-bottom:18px;padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06);}
+    section h2{color:var(--verde-escuro);font-size:1.5rem;margin-bottom:8px;font-weight:800;display:flex;align-items:center;gap:12px;}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:12px;}
+    .card{background:#FAFCFB;padding:14px;border-radius:10px;border-left:6px solid var(--verde-medio);}
+    .card h3{margin-bottom:6px;color:var(--verde-escuro);font-size:1.05rem}
+    .card .date{color:var(--verde-medio);font-weight:700;font-size:.95rem}
     .contact-form{max-width:600px;margin:0 auto}
     .form-group{margin-bottom:12px}
     label{display:block;margin-bottom:6px;font-weight:700;color:var(--verde-escuro)}
     input,textarea{width:100%;padding:10px;border:1px solid #E4E7EB;border-radius:8px;font-size:1rem}
-
     .btn{background:var(--verde-medio);color:var(--branco);padding:10px 18px;border-radius:10px;border:0;font-weight:800;cursor:pointer}
-
+    .btn-small{padding:6px 10px;font-size:0.9rem;border-radius:8px}
     footer{background:var(--verde-escuro);color:var(--branco);text-align:center;padding:20px;font-weight:600;margin-top:20px;border-radius:6px}
-
-    /* MOBILE ADJUSTMENTS */
-    @media (max-width: 880px){
-      .logo-row img{height:64px}
-      .logo-row h1{font-size:1.2rem}
-      .hero{padding:24px}
-      .hero h2{font-size:1.6rem}
-      .hero p{font-size:0.98rem}
-      .nav ul{display:none}               /* hide desktop menu */
-      .nav-toggle{display:block}         /* show hamburger */
-      header{position:static}            /* make header scroll away on mobile (fixes "estático") */
-    }
-
-    /* mobile open menu state */
-    .nav.open ul{
-      display:block;
-      position:absolute;
-      right:20px;
-      top:84px;
-      background:var(--branco);
-      border-radius:10px;
-      padding:8px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.12);
-      min-width:180px;
-    }
-    .nav.open ul li{margin:6px 0}
-
-    /* small phones */
-    @media (max-width:420px){
-      .logo-row img{height:52px}
-      .hero{padding:18px}
-      .hero h2{font-size:1.3rem}
-      .header-content{padding:8px 12px}
-      .nav.open ul{top:76px; right:10px; min-width:150px}
-    }
-
-    /* Ensure anchor targets are not hidden by header on large screens */
-    @media (min-width:881px){
-      html {scroll-padding-top:120px;} /* header + nav height */
-      header{position:sticky; top:0;}
-    }
+    @media (max-width: 880px){.logo-row img{height:64px}.logo-row h1{font-size:1.2rem}.hero{padding:24px}.hero h2{font-size:1.6rem}.hero p{font-size:0.98rem}.nav ul{display:none}.nav-toggle{display:block}header{position:static}}
+    .nav.open ul{display:block;position:absolute;right:20px;top:84px;background:var(--branco);border-radius:10px;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,0.12);min-width:180px;}
+    @media (min-width:881px){html {scroll-padding-top:120px;}header{position:sticky; top:0;}}
   </style>
 </head>
 <body>
@@ -202,11 +64,8 @@
 
       <nav class="nav" id="site-nav">
         <button class="nav-toggle" id="navToggle" aria-label="Abrir menu">
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
         </button>
-
         <ul>
           <li><a href="#inicio">Início</a></li>
           <li><a href="#avisos">Avisos</a></li>
@@ -226,78 +85,56 @@
       <p>Seu espaço de comunicação, informação e convivência. Aqui você encontra avisos importantes, eventos, serviços e muito mais!</p>
     </section>
 
+    <!-- Seção de avisos: agora dinâmica (conteúdo será carregado do folder content/avisos) -->
     <section id="avisos">
       <h2>📢 Avisos e Comunicados</h2>
+
+      <!-- BOTÃO CONTROLADO POR JS: por padrão escondido -->
+      <div style="text-align:right; margin-bottom:12px;">
+        <!-- botão real escondido por padrão -->
+        <a id="publish-btn" class="btn" href="/admin" target="_blank" rel="noopener noreferrer" style="display:none;">Publicar Aviso</a>
+
+        <!-- botão de login para abrir o widget Netlify Identity -->
+        <button id="login-btn" class="btn" style="margin-left:10px; background:#fff; color:var(--verde-medio); border:2px solid var(--verde-medio); display:inline-block;">
+          Entrar
+        </button>
+
+        <span id="login-placeholder" style="display:inline-block; margin-left:12px; color:var(--verde-medio); font-weight:700;">
+          Área de publicação disponível apenas para administradores.
+        </span>
+      </div>
+
+      <!-- Área onde os cards serão injetados pelo script -->
       <div class="cards">
-        <div class="card">
-          <span class="date">08/11/2025</span>
-          <h3>Manutenção do Elevador</h3>
-          <p>Informamos que o elevador do Bloco A passará por manutenção preventiva no dia 15/11, das 8h às 12h.</p>
-        </div>
-        <div class="card">
-          <span class="date">05/11/2025</span>
-          <h3>Limpeza da Caixa d'Água</h3>
-          <p>A limpeza da caixa d'água está agendada para o dia 20/11. Haverá interrupção no fornecimento de água.</p>
-        </div>
-        <div class="card">
-          <span class="date">01/11/2025</span>
-          <h3>Horário da Portaria</h3>
-          <p>Lembramos que a portaria funciona 24h. Para entregas após as 22h, favor avisar com antecedência.</p>
-        </div>
+        <p>Carregando avisos...</p>
       </div>
     </section>
 
+    <!-- restante do conteúdo (bazar, prestadores, eventos, regras, contato) -->
     <section id="bazar">
       <h2>🛍️ Bazar e Doações</h2>
       <div class="cards">
-        <div class="card">
-          <h3>Sofá 3 lugares - R$ 400</h3>
-          <p><strong>Morador:</strong> Apto 201 - Bloco B</p>
-        </div>
-        <div class="card">
-          <h3>Bicicleta infantil - DOAÇÃO</h3>
-          <p><strong>Morador:</strong> Apto 305 - Bloco A</p>
-        </div>
-        <div class="card">
-          <h3>Livros diversos - TROCA</h3>
-          <p><strong>Morador:</strong> Apto 102 - Bloco C</p>
-        </div>
+        <div class="card"><h3>Sofá 3 lugares - R$ 400</h3><p><strong>Morador:</strong> Apto 201 - Bloco B</p></div>
+        <div class="card"><h3>Bicicleta infantil - DOAÇÃO</h3><p><strong>Morador:</strong> Apto 305 - Bloco A</p></div>
+        <div class="card"><h3>Livros diversos - TROCA</h3><p><strong>Morador:</strong> Apto 102 - Bloco C</p></div>
       </div>
     </section>
 
     <section id="prestadores">
       <h2>🔧 Prestadores de Serviço</h2>
       <div class="cards">
-        <div class="card">
-          <h3>Encanador - João Silva</h3>
-          <p><strong>Contato:</strong> (21) 98888-1111</p>
-        </div>
-        <div class="card">
-          <h3>Eletricista - Carlos Mendes</h3>
-          <p><strong>Contato:</strong> (21) 97777-2222</p>
-        </div>
-        <div class="card">
-          <h3>Diarista - Maria Santos</h3>
-          <p><strong>Contato:</strong> (21) 96666-3333</p>
-        </div>
+        <div class="card"><h3>Encanador - João Silva</h3><p><strong>Contato:</strong> (21) 98888-1111</p></div>
+        <div class="card"><h3>Eletricista - Carlos Mendes</h3><p><strong>Contato:</strong> (21) 97777-2222</p></div>
+        <div class="card"><h3>Diarista - Maria Santos</h3><p><strong>Contato:</strong> (21) 96666-3333</p></div>
       </div>
     </section>
 
     <section id="eventos">
       <h2>🎉 Eventos</h2>
       <div class="cards">
-        <div class="card">
-          <span class="date">25/12/2025</span>
-          <h3>Festa de Natal</h3>
-        </div>
-        <div class="card">
-          <span class="date">12/10/2025</span>
-          <h3>Dia das Crianças</h3>
-        </div>
-        <div class="card">
-          <h3>Aula de Yoga</h3>
-          <p>Todos os sábados às 8h</p>
-        </div>
+        <div class="card"><span class="date">25/12/2025</span><h3>Festa de Natal</h3></div>
+        <div class="card"><span class="date">12/10/2025</span><h3>Dia das Crianças</h3></div>
+        <div class="card"><h3>Aula de Yoga</h3><p>Todos os sábados às 8h</p></div>
       </div>
     </section>
 
@@ -313,11 +150,7 @@
     <section id="contato">
       <h2>📞 Contato e Síndico</h2>
       <div class="contact-form">
-        <p style="text-align:center; margin-bottom:12px;">
-          <strong>Síndico:</strong> José Carlos Oliveira<br>
-          <strong>Telefone:</strong> (21) 99999-0000
-        </p>
-
+        <p style="text-align:center; margin-bottom:12px;"><strong>Síndico:</strong> José Carlos Oliveira<br><strong>Telefone:</strong> (21) 99999-0000</p>
         <form onsubmit="event.preventDefault(); alert('Este é um exemplo — em um site real a mensagem seria enviada.');">
           <div class="form-group"><label for="nome">Nome</label><input id="nome"></div>
           <div class="form-group"><label for="apt">Apartamento</label><input id="apt" placeholder="Ex: 201 - Bloco A"></div>
@@ -333,21 +166,338 @@
     <p>© 2025 - Todos os direitos reservados</p>
   </footer>
 
+  <!-- Biblioteca para converter Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- NETLIFY IDENTITY WIDGET (obrigatório para login) -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
   <script>
+    // Config do repositório (usado pelo script que carrega os avisos)
+    const OWNER = 'parquelins';
+    const REPO  = 'meuparquelins';
+    const BRANCH = 'main';
+    const CONTENT_PATH = 'content/avisos';
+
+    // helper para regex
+    function escapeRegExp(s) {
+      return s.replace(/[.*+?^${}()|[\\\]\\]/g, '\\$&');
+    }
+
+    // Busca lista de arquivos markdown na pasta
+    async function listaAvisos() {
+      const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${CONTENT_PATH}?ref=${BRANCH}`;
+      const res = await fetch(api);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.filter(item => item.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name));
+    }
+    async function buscaMarkdown(download_url) {
+      const res = await fetch(download_url);
+      if (!res.ok) return '';
+      return await res.text();
+    }
+    function parseFrontmatter(md) {
+      const fmRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
+      const m = md.match(fmRegex);
+      if (!m) return { data: {}, body: md };
+      const lines = m[1].split(/\r?\n/);
+      const data = {};
+      for (const line of lines) {
+        const [k, ...rest] = line.split(':');
+        if(!k) continue;
+        let v = rest.join(':').trim();
+        v = v.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
+        data[k.trim()] = v;
+      }
+      return { data, body: m[2] };
+    }
+
+    // NOVA renderMedia: não exibe links de vídeo, só o player
+    function renderMedia(front) {
+      let html = '';
+      // imagens (mantemos o comportamento anterior)
+      if (front.data && front.data.image) {
+        const imgs = Array.isArray(front.data.image) ? front.data.image : [front.data.image];
+        imgs.forEach(src => {
+          if (!src) return;
+          html += `<img src="${src}" alt="" style="max-width:100%;margin-bottom:10px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06);" />`;
+        });
+      } else {
+        const matches = (front.body.match(/\/uploads\/[^\s)"]+/g) || []);
+        matches.forEach(m => {
+          html += `<img src="${m}" style="max-width:100%;margin-bottom:10px;border-radius:8px;" />`;
+        });
+      }
+
+      // vídeo: preferir frontmatter (video_url ou video)
+      const videoUrl = front.data && (front.data.video_url || front.data.video) ? (front.data.video_url || front.data.video) : '';
+      if (videoUrl) {
+        // se for YouTube ou Vimeo, usa iframe, senão usa player <video>
+        let yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/);
+        if (yt && yt[1]) {
+          html += `<div style="margin-top:12px"><iframe src="https://www.youtube.com/embed/${yt[1]}" style="width:100%;max-width:900px;height:400px;border-radius:8px;" frameborder="0" allowfullscreen></iframe></div>`;
+        } else {
+          let vm = videoUrl.match(/vimeo\.com\/(\d+)/);
+          if (vm && vm[1]) {
+            html += `<div style="margin-top:12px"><iframe src="https://player.vimeo.com/video/${vm[1]}" style="width:100%;max-width:900px;height:400px;border-radius:8px;" frameborder="0" allowfullscreen></iframe></div>`;
+          } else {
+            // usa player <video> direto (sem exibir URL/texto)
+            html += `
+              <div style="margin-top:12px;max-width:900px;">
+                <video controls preload="none" style="width:100%;height:auto;background:#000;border-radius:6px;">
+                  <source src="${videoUrl}" type="video/mp4">
+                  Seu navegador não suporta vídeo.
+                </video>
+              </div>`;
+          }
+        }
+      }
+
+      return html;
+    }
+
+    async function carregarAvisosNaPagina() {
+      const cardsContainer = document.querySelector('#avisos .cards');
+      if (!cardsContainer) return;
+      cardsContainer.innerHTML = '<p>Carregando avisos...</p>';
+      try {
+        const files = await listaAvisos();
+        if (!files.length) { cardsContainer.innerHTML = '<p>Nenhum aviso encontrado.</p>'; return; }
+        cardsContainer.innerHTML = '';
+        for (const file of files) {
+          const md = await buscaMarkdown(file.download_url);
+          const parsed = parseFrontmatter(md);
+          const title = parsed.data.title || file.name.replace('.md','');
+          const date = parsed.data.date || '';
+          const summary = parsed.data.summary || (parsed.body.substring(0,160) + '...');
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `<span class="date">${date}</span><h3>${title}</h3><p>${summary}</p><p style="margin-top:8px"><a href="#" data-file="${file.download_url}" class="btn btn-small">Ver aviso</a></p>`;
+          cardsContainer.appendChild(card);
+        }
+
+        // LISTENER ATUALIZADO: evita player duplicado removendo <video> / <iframe> do HTML gerado
+document.querySelectorAll('a[data-file]').forEach(a => {
+  a.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const dl = e.currentTarget.getAttribute('data-file');
+    const md = await buscaMarkdown(dl);
+    const parsed = parseFrontmatter(md);
+
+    // pega URL do vídeo (se houver)
+    const videoUrl = parsed.data && (parsed.data.video || parsed.data.video_url) ? (parsed.data.video || parsed.data.video_url).trim() : '';
+    const filename = videoUrl ? videoUrl.split('/').pop() : '';
+
+    // --- REMOVER/ESCONDER MENÇÕES AO VÍDEO NO CORPO ---
+    if (videoUrl && parsed.body) {
+      // remove ocorrências exatas do URL e do nome do arquivo do corpo markdown
+      parsed.body = parsed.body.replace(new RegExp(escapeRegExp(videoUrl), 'g'), '');
+      if (filename) parsed.body = parsed.body.replace(new RegExp(escapeRegExp(filename), 'g'), '');
+      // remove links markdown que contenham o URL ou o nome do arquivo [texto](url)
+      parsed.body = parsed.body.replace(new RegExp('\\[[^\\]]*\\]\\(\\s*' + escapeRegExp(videoUrl) + '\\s*\\)', 'gi'), '');
+      if (filename) parsed.body = parsed.body.replace(new RegExp('\\[[^\\]]*\\]\\([^)]*' + escapeRegExp(filename) + '[^)]*\\)', 'gi'), '');
+    }
+    // --- fim limpeza ---
+
+    // converte markdown -> html
+    let html = marked.parse(parsed.body || '');
+
+    // REMOVE qualquer <video> ou <iframe> que esteja dentro do markdown convertido
+    html = html.replace(/<video[\s\S]*?<\/video>/gi, '');
+    html = html.replace(/<iframe[\s\S]*?<\/iframe>/gi, '');
+
+    // SANITIZA LINKS: remove anchors que apontem para arquivos de vídeo ou cujo texto contenha "assistir vídeo"
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    tmp.querySelectorAll('a').forEach(aEl => {
+      const href = (aEl.getAttribute('href') || '').trim();
+      const text = (aEl.textContent || '').trim();
+      // critérios para remoção:
+      const textMatch = /(?:assistir|ver)\s*(?:v[ií]deo|video)/i.test(text);
+      const hrefVideoExt = /\.(mp4|mov|webm|ogg)(?:[?#].*)?$/i.test(href);
+      const hrefContainsFilename = filename && href.includes(filename);
+      if (textMatch || hrefVideoExt || hrefContainsFilename) {
+        aEl.remove();
+      }
+    });
+    html = tmp.innerHTML;
+
+    // monta modal: renderMedia(parsed) adiciona o player (já sem link textual)
+    const modal = document.createElement('div');
+    modal.style = 'position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto;background:rgba(0,0,0,0.6);padding:30px;z-index:9999;';
+    modal.innerHTML = `<div style="max-width:900px;margin:0 auto;background:#fff;padding:22px;border-radius:10px;position:relative;">
+      <button id="fechar" style="position:absolute;right:14px;top:14px;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;">Fechar</button>
+      <h2 style="color:#1B3A2D">${parsed.data.title || ''}</h2>
+      <p style="color:#2E6B4F;font-weight:700">${parsed.data.date || ''}</p>
+      <div style="margin-top:12px">${renderMedia(parsed)}${html}</div>
+    </div>`;
+    document.body.appendChild(modal);
+    modal.querySelector('#fechar').addEventListener('click', () => modal.remove());
+  });
+});
+      } catch (err) { console.error(err); cardsContainer.innerHTML = '<p>Erro ao carregar avisos.</p>'; }
+    }
+
+    // CONTROLE DO BOTÃO: usa Netlify Identity
+    function updatePublishUI(user) {
+      const btn = document.getElementById('publish-btn');
+      const placeholder = document.getElementById('login-placeholder');
+      if (!btn || !placeholder) return;
+      if (user) {
+        const roles = (user && user.app_metadata && user.app_metadata.roles) ? user.app_metadata.roles : [];
+        // mostrar só se role admin estiver presente
+        const isAdmin = roles.includes('admin');
+        if (isAdmin) { btn.style.display = 'inline-block'; placeholder.style.display = 'none'; }
+        else { btn.style.display = 'none'; placeholder.textContent = 'Você não tem permissão para publicar.'; }
+      } else {
+        btn.style.display = 'none';
+        placeholder.style.display = 'inline-block';
+        placeholder.textContent = 'Área de publicação disponível apenas para administradores.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // iniciar carregamento de avisos
+      carregarAvisosNaPagina();
+
+      // botao entrar abre widget
+      const loginBtn = document.getElementById('login-btn');
+      if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+          if (window.netlifyIdentity) netlifyIdentity.open();
+          else alert('Serviço de login indisponível (verifique o Netlify Identity).');
+        });
+      }
+
+      // se o widget estiver disponível, ligar eventos
+      if (window.netlifyIdentity) {
+        netlifyIdentity.on('init', user => updatePublishUI(user));
+        netlifyIdentity.on('login', user => { updatePublishUI(user); netlifyIdentity.close(); });
+        netlifyIdentity.on('logout', () => updatePublishUI(null));
+        netlifyIdentity.init();
+        // checar usuário atual
+        updatePublishUI(netlifyIdentity.currentUser());
+      } else {
+        updatePublishUI(null);
+      }
+    });
+
     // Toggle mobile menu
     const nav = document.getElementById('site-nav');
     const toggle = document.getElementById('navToggle');
-
-    toggle.addEventListener('click', () => {
-      nav.classList.toggle('open');
-    });
-
-    // Close mobile menu when clicking a link
-    document.querySelectorAll('.nav ul a').forEach(a => {
-      a.addEventListener('click', () => {
-        nav.classList.remove('open');
-      });
-    });
+    toggle && toggle.addEventListener('click', () => nav.classList.toggle('open'));
+    document.querySelectorAll('.nav ul a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
   </script>
+  <!-- BOTÃO LATERAL HIDDEN - substituído -->
+<style>
+/* botão flutuante - escondido por padrão */
+#cms-toggle-btn{
+  position: fixed;
+  right: 16px;
+  bottom: 80px;
+  background:#fff;
+  border:2px solid #2f6b48;
+  color:#2f6b48;
+  padding:10px 14px;
+  border-radius:8px;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+  cursor:pointer;
+  z-index:9999;
+  display:none; /* ESSE é o ponto: começa escondido */
+}
+#cms-drawer{
+  position: fixed;
+  right: -320px;
+  top: 0;
+  width: 320px;
+  height: 100%;
+  background: #fff;
+  border-left: 1px solid #e6e6e6;
+  box-shadow: -6px 0 18px rgba(0,0,0,.08);
+  transition: right .28s ease;
+  z-index:9998;
+  padding:18px;
+}
+#cms-drawer.open{ right: 0; }
+#cms-drawer .close{ display:block; margin-bottom:12px; color:#777; cursor:pointer; }
+#cms-drawer a.btn-admin {
+  display:inline-block; margin-top:6px;
+  background:#2f6b48; color:#fff; padding:8px 12px; border-radius:6px; text-decoration:none;
+}
+</style>
+
+<button id="cms-toggle-btn" aria-label="Abrir menu de publicação">Publicar ▸</button>
+
+<div id="cms-drawer" aria-hidden="true">
+  <span class="close" id="cms-close">Fechar ✕</span>
+  <h3>Área de publicação</h3>
+  <p>Somente administradores podem publicar. Entre para editar:</p>
+  <a class="btn-admin" id="cms-admin-link" href="/admin/" target="_blank" rel="noopener noreferrer">Abrir CMS</a>
+  <hr>
+  <p style="font-size:.9em;color:#666">Atalhos:</p>
+  <ul style="padding-left:18px;">
+    <li><a href="/admin/#/collections/avisos">Avisos</a></li>
+    <li><a href="/admin/#/collections/bazar">Bazar</a></li>
+    <li><a href="/admin/#/collections/prestadores">Prestadores</a></li>
+    <li><a href="/admin/#/collections/eventos">Eventos</a></li>
+    <li><a href="/admin/#/collections/regras">Regras</a></li>
+  </ul>
+</div>
+
+<script>
+/*
+  Lógica:
+  - botão e drawer começam escondidos.
+  - só mostramos se Netlify Identity inicializar e o usuário tiver role 'admin'.
+  - mantemos comportamento de abrir o drawer.
+*/
+
+const cmsBtn = document.getElementById('cms-toggle-btn');
+const cmsDrawer = document.getElementById('cms-drawer');
+const cmsClose = document.getElementById('cms-close');
+
+function openDrawer() {
+  cmsDrawer.classList.toggle('open');
+  cmsDrawer.setAttribute('aria-hidden', !cmsDrawer.classList.contains('open'));
+}
+
+cmsBtn && cmsBtn.addEventListener('click', openDrawer);
+cmsClose && cmsClose.addEventListener('click', () => {
+  cmsDrawer.classList.remove('open');
+  cmsDrawer.setAttribute('aria-hidden', true);
+});
+
+// Função que decide mostrar/esconder botão baseado em usuário
+function setCmsVisibilityForUser(user) {
+  if (!cmsBtn) return;
+  if (!user) {
+    cmsBtn.style.display = 'none';
+    cmsDrawer.classList.remove('open');
+    cmsDrawer.setAttribute('aria-hidden', true);
+    return;
+  }
+  const roles = (user && user.app_metadata && user.app_metadata.roles) ? user.app_metadata.roles : [];
+  const isAdmin = roles.includes('admin');
+  if (isAdmin) cmsBtn.style.display = 'block';
+  else cmsBtn.style.display = 'none';
+}
+
+// Inicialização com Netlify Identity (se disponível)
+if (window.netlifyIdentity) {
+  // quando o widget inicializa
+  netlifyIdentity.on('init', user => setCmsVisibilityForUser(user));
+  // login/logout
+  netlifyIdentity.on('login', user => { setCmsVisibilityForUser(user); netlifyIdentity.close(); });
+  netlifyIdentity.on('logout', () => setCmsVisibilityForUser(null));
+  // chama init
+  try { netlifyIdentity.init(); } catch(e){ console.warn('Netlify Identity init failed', e); }
+} else {
+  // se widget não carregou, mantemos escondido (segurança)
+  cmsBtn.style.display = 'none';
+}
+</script>
+<!-- Fim do bloco do drawer -->
+
 </body>
 </html>
