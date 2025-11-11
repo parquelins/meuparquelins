@@ -1,8 +1,12 @@
 ---
-title: "Manutenção do Elevador" <-- <TÍTULO DO AVISO>
-date: "2025-11-15" <-- <DATA (AAAA-MM-DD)>
-summary: "Elevador do Bloco A em manutenção preventiva das 8h às 12h." <--
-video: "/meuparquelins/videos/SEU_VIDEO.mp4" <-- <1416529-hd_1920_1080_30fps>
-image: "/meuparquelins/images/poster-manutencao.jpg" <-- (opcional) imagem poster
+title: "Parquinho Depredado"
+date: "11 / 11 / 2025"
+summary: "Parquinho das crianças fechado devido a mal uso."
+video: "/meuparquelins/1416529-hd_1280_720_30fps.mp4"
 ---
-manutenção em teste
+Prezados moradores,
+
+O parquinho seguirá fechado por mal uso, compramos brinquedos novos e foram instalados no Domingo de manhã, e no final do dia, já havia sofrido danos, 
+filmagens mostram crianças com a idade superior a permitida, usando os brinquedos de forma indevida, o balanço de bebê, foi destruido, iremos notificar os pais 
+para que possam restituir o condominio do valor pago nos brinquedos até para repor para que possamos reabrir o local, para que os menores consigam assim usufruir
+devidamente daquilo que era o foco desde o príncipio.
