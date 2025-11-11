@@ -15,7 +15,3 @@ image: "/meuparquelins/fotos/funcional grupo.jpg"
         <li>20:00 — Encerramento</li>
     </ul>
 </div>
-
-<div style="text-align:center; margin-top:20px;">
-  ![Grupo Funcional](https://parquelins.github.io/meuparquelins/fotos/funcionalgrupo.jpg)
-</div>
