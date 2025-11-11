@@ -268,6 +268,40 @@ async function listaAvisos() {
       return html;
     }
 
+    // --- função que baixa o markdown (adicionar se estiver ausente) ---
+async function buscaMarkdown(download_url) {
+  try {
+    const res = await fetch(download_url);
+    if (!res.ok) {
+      console.warn('Falha ao baixar markdown:', download_url, res.status);
+      return '';
+    }
+    return await res.text();
+  } catch (err) {
+    console.error('Erro em buscaMarkdown():', err);
+    return '';
+  }
+}
+
+// --- parser simples de frontmatter (se não existir) ---
+function parseFrontmatter(md) {
+  if (!md) return { data: {}, body: '' };
+  const fmRegex = /^---\s*[\r\n]([\s\S]*?)\r?\n---\s*[\r\n]?([\s\S]*)$/;
+  const m = md.match(fmRegex);
+  if (!m) return { data: {}, body: md };
+  const lines = m[1].split(/\r?\n/);
+  const data = {};
+  for (const line of lines) {
+    const idx = line.indexOf(':');
+    if (idx === -1) continue;
+    const k = line.substring(0, idx).trim();
+    let v = line.substring(idx + 1).trim();
+    v = v.replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
+    data[k] = v;
+  }
+  return { data, body: m[2] };
+}
+
     async function carregarAvisosNaPagina() {
       const cardsContainer = document.querySelector('#avisos .cards');
       if (!cardsContainer) return;
