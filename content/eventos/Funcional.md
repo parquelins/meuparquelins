@@ -1,5 +1,5 @@
 ---
-title: "Festa de Natal"
+title: "Treinamento Funcional Projeto Verão 2026!!!"
 date: "11 / 11 / 2025"
 summary: "Treinamento funcional na nossa quadra!"
 image: "/meuparquelins/fotos/funcional grupo.jpg"
