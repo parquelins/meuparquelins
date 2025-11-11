@@ -256,57 +256,6 @@
 
       return html;
     }
-    // --- Helpers genéricos para carregar collections ---
-async function listaArquivosEm(path) {
-  const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`;
-  const res = await fetch(api);
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.filter(item => item.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name));
-}
-
-async function loadCollection(contentPath, containerSelector, cardRenderer) {
-  const container = document.querySelector(containerSelector);
-  if (!container) return;
-  container.innerHTML = '<p>Carregando...</p>';
-  try {
-    const files = await listaArquivosEm(contentPath);
-    if (!files.length) { container.innerHTML = '<p>Nenhum item encontrado.</p>'; return; }
-    container.innerHTML = '';
-    for (const file of files) {
-      const md = await buscaMarkdown(file.download_url);
-      const parsed = parseFrontmatter(md);
-      const cardHtml = cardRenderer(parsed, file);
-      const div = document.createElement('div');
-      div.className = 'card';
-      div.innerHTML = cardHtml;
-      container.appendChild(div);
-    }
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = '<p>Erro ao carregar conteúdo.</p>';
-  }
-}
-
-// Renderers simples
-function cardRendererSimple(parsed, file) {
-  const title = parsed.data.title || file.name.replace('.md','');
-  const date = parsed.data.date || '';
-  const summary = parsed.data.summary || ((parsed.body || '').replace(/\n/g,' ').substring(0,140) + '...');
-  const thumb = parsed.data.image || (parsed.data.images && parsed.data.images[0]) || '';
-  return `<span class="date">${date}</span><h3>${title}</h3>
-    ${thumb ? `<img src="${thumb}" alt="" style="max-width:100%;height:110px;object-fit:cover;border-radius:6px;margin:8px 0;">` : ''}
-    <p>${summary}</p>
-    <p style="margin-top:8px"><a href="#" data-file="${file.download_url}" class="btn btn-small">Ver item</a></p>`;
-}
-
-function cardRendererEvento(parsed, file) {
-  const title = parsed.data.title || file.name.replace('.md','');
-  const date = parsed.data.date || '';
-  const summary = parsed.data.summary || ((parsed.body || '').replace(/\n/g,' ').substring(0,120) + '...');
-  return `<span class="date">${date}</span><h3>${title}</h3><p>${summary}</p>
-    <p style="margin-top:8px"><a href="#" data-file="${file.download_url}" class="btn btn-small">Ver evento</a></p>`;
-}
 
     async function carregarAvisosNaPagina() {
       const cardsContainer = document.querySelector('#avisos .cards');
@@ -328,60 +277,50 @@ function cardRendererEvento(parsed, file) {
           cardsContainer.appendChild(card);
         }
 
-       // LISTENER GLOBAL: evita duplicação e atende todas as seções (bazar, eventos, etc.)
-document.addEventListener('click', async function(ev) {
-  const a = ev.target.closest && ev.target.closest('a[data-file]');
-  if (!a) return;
-  ev.preventDefault();
-  const dl = a.getAttribute('data-file');
-  try {
+        // LISTENER ATUALIZADO: evita player duplicado removendo <video> / <iframe> do HTML gerado
+document.querySelectorAll('a[data-file]').forEach(a => {
+  a.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const dl = e.currentTarget.getAttribute('data-file');
     const md = await buscaMarkdown(dl);
     const parsed = parseFrontmatter(md);
 
-    // Limpeza de menções ao vídeo no corpo (evita link textual)
+    // pega URL do vídeo (se houver)
     const videoUrl = parsed.data && (parsed.data.video || parsed.data.video_url) ? (parsed.data.video || parsed.data.video_url).trim() : '';
     const filename = videoUrl ? videoUrl.split('/').pop() : '';
+
+    // --- REMOVER/ESCONDER MENÇÕES AO VÍDEO NO CORPO ---
     if (videoUrl && parsed.body) {
+      // remove ocorrências exatas do URL e do nome do arquivo do corpo markdown
       parsed.body = parsed.body.replace(new RegExp(escapeRegExp(videoUrl), 'g'), '');
       if (filename) parsed.body = parsed.body.replace(new RegExp(escapeRegExp(filename), 'g'), '');
+      // remove links markdown que contenham o URL ou o nome do arquivo [texto](url)
       parsed.body = parsed.body.replace(new RegExp('\\[[^\\]]*\\]\\(\\s*' + escapeRegExp(videoUrl) + '\\s*\\)', 'gi'), '');
       if (filename) parsed.body = parsed.body.replace(new RegExp('\\[[^\\]]*\\]\\([^)]*' + escapeRegExp(filename) + '[^)]*\\)', 'gi'), '');
     }
+    // --- fim limpeza ---
 
-    // converte markdown -> html e remove tags de player já embutidas
+    // converte markdown -> html
     let html = marked.parse(parsed.body || '');
+
+    // REMOVE qualquer <video> ou <iframe> que esteja dentro do markdown convertido
     html = html.replace(/<video[\s\S]*?<\/video>/gi, '');
     html = html.replace(/<iframe[\s\S]*?<\/iframe>/gi, '');
 
-    // remove anchors que contenham "assistir vídeo" ou apontem para arquivos de vídeo
+    // SANITIZA LINKS: remove anchors que apontem para arquivos de vídeo ou cujo texto contenha "assistir vídeo"
     const tmp = document.createElement('div');
     tmp.innerHTML = html;
     tmp.querySelectorAll('a').forEach(aEl => {
       const href = (aEl.getAttribute('href') || '').trim();
       const text = (aEl.textContent || '').trim();
+      // critérios para remoção:
       const textMatch = /(?:assistir|ver)\s*(?:v[ií]deo|video)/i.test(text);
       const hrefVideoExt = /\.(mp4|mov|webm|ogg)(?:[?#].*)?$/i.test(href);
       const hrefContainsFilename = filename && href.includes(filename);
-      if (textMatch || hrefVideoExt || hrefContainsFilename) aEl.remove();
+      if (textMatch || hrefVideoExt || hrefContainsFilename) {
+        aEl.remove();
+      }
     });
-    html = tmp.innerHTML;
-
-    // monta modal usando renderMedia(parsed) para inserir player/imagens
-    const modal = document.createElement('div');
-    modal.style = 'position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto;background:rgba(0,0,0,0.6);padding:30px;z-index:9999;';
-    modal.innerHTML = `<div style="max-width:900px;margin:0 auto;background:#fff;padding:22px;border-radius:10px;position:relative;">
-      <button id="fechar" style="position:absolute;right:14px;top:14px;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;">Fechar</button>
-      <h2 style="color:#1B3A2D">${parsed.data.title || ''}</h2>
-      <p style="color:#2E6B4F;font-weight:700">${parsed.data.date || ''}</p>
-      <div style="margin-top:12px">${renderMedia(parsed)}${html}</div>
-    </div>`;
-    document.body.appendChild(modal);
-    modal.querySelector('#fechar').addEventListener('click', () => modal.remove());
-  } catch(err) {
-    console.error(err);
-    alert('Erro ao abrir o item.');
-  }
-});
     html = tmp.innerHTML;
 
     // monta modal: renderMedia(parsed) adiciona o player (já sem link textual)
