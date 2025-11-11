@@ -135,47 +135,64 @@
 
    // Substitua a função parseFrontmatter existente por esta:
   function parseFrontmatter(md) {
-  const fmRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-  const m = md.match(fmRegex);
-  if (!m) return { data: {}, body: md };
+  try {
+    // aceita CRLF (\r\n) e LF (\n)
+    const fmRegex = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/;
+    const m = md.match(fmRegex);
+    if (!m) return { data: {}, body: md };
 
-  const lines = m[1].split(/\r?\n/);
-  const data = {};
-  let currentKey = null;
+    const raw = m[1];
+    const body = m[2];
 
-  for (let raw of lines) {
-    const kv = raw.match(/^\s*([A-Za-z0-9_\-]+)\s*:\s*(.*)$/);
-    const li = raw.match(/^\s*-\s+(.*)$/);
+    const lines = raw.split(/\r?\n/);
+    const data = {};
+    let currentKey = null;
 
-    if (kv) {
-      const key = kv[1].trim();
-      let val = kv[2] !== undefined ? kv[2].trim() : '';
+    for (let rawLine of lines) {
+      // corresponde a "chave: valor" (pode ser "key:" sem valor => lista a seguir)
+      const kv = rawLine.match(/^\s*([A-Za-z0-9_\-]+)\s*:\s*(.*)$/);
+      // corresponde a "- valor" (item de lista)
+      const li = rawLine.match(/^\s*-\s+(.*)$/);
 
-      if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
-      if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1, -1);
+      if (kv) {
+        const key = kv[1].trim();
+        let val = kv[2] !== undefined ? kv[2].trim() : '';
 
-      if (val === '') {
-        data[key] = [];
-        currentKey = key;
-      } else {
-        if (val.indexOf(',') !== -1) {
-          data[key] = val.split(',').map(s => s.trim());
+        // remove aspas envolventes
+        if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
+        if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1, -1);
+
+        if (val === '') {
+          // chave sem valor => lista a seguir
+          data[key] = [];
+          currentKey = key;
         } else {
-          data[key] = val;
+          // valor tem conteúdo — aceita lista separada por vírgula
+          if (val.indexOf(',') !== -1) {
+            data[key] = val.split(',').map(s => s.trim());
+          } else {
+            data[key] = val;
+          }
+          currentKey = null;
         }
+      } else if (li && currentKey) {
+        // item de lista para a chave corrente
+        let item = li[1].trim();
+        if (item.startsWith('"') && item.endsWith('"')) item = item.slice(1, -1);
+        if (item.startsWith("'") && item.endsWith("'")) item = item.slice(1, -1);
+        data[currentKey].push(item);
+      } else {
+        // linha não reconhecida -> reseta currentKey
         currentKey = null;
       }
-    } else if (li && currentKey) {
-      let item = li[1].trim();
-      if (item.startsWith('"') && item.endsWith('"')) item = item.slice(1, -1);
-      if (item.startsWith("'") && item.endsWith("'")) item = item.slice(1, -1);
-      data[currentKey].push(item);
-    } else {
-      currentKey = null;
     }
-  }
 
-  return { data, body: m[2] };
+    return { data, body };
+  } catch (err) {
+    // Em caso de erro, loga no console e devolve fallback seguro
+    console.error('parseFrontmatter: falha ao analisar frontmatter', err);
+    return { data: {}, body: md };
+  }
 }
 
     // render media (images in frontmatter or /uploads/..., videos youtube/vimeo/mp4)
