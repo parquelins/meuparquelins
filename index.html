@@ -244,14 +244,75 @@
   return html;
 }
 
-    // lista arquivos markdown numa pasta (usa GitHub API pública)
-    async function listaConteudo(contentPath) {
-      const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${contentPath}?ref=${BRANCH}`;
+    // --- novo: cache do manifest (para reduzir fetchs) ---
+let _cachedManifest = null;
+
+async function getManifest() {
+  if (_cachedManifest !== null) return _cachedManifest;
+
+  try {
+    // URL raw do manifest no repositório (substitua OWNER/REPO/BRANCH se necessário)
+    const rawUrl = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/content/manifest.json`;
+    const r = await fetch(rawUrl, { cache: "no-cache" });
+    if (!r.ok) {
+      _cachedManifest = null;
+      return null;
+    }
+    _cachedManifest = await r.json();
+    return _cachedManifest;
+  } catch (err) {
+    console.warn('getManifest: não foi possível carregar manifest', err);
+    _cachedManifest = null;
+    return null;
+  }
+}
+
+// --- nova listaConteudo: usa manifest se existir; senão, tenta GitHub API com retry leve ---
+async function listaConteudo(contentPath) {
+  // 1) tenta usar manifest estático (evita rate limit)
+  try {
+    const manifest = await getManifest();
+    if (manifest && manifest[contentPath] && Array.isArray(manifest[contentPath])) {
+      // manifest[contentPath] deve ser um array de URLs raw para os markdowns
+      // convertendo pra estrutura compatível com o resto do código:
+      return manifest[contentPath].map(url => {
+        // extrair nome do arquivo a partir da URL
+        const parts = url.split('/');
+        const name = parts[parts.length - 1];
+        return {
+          name: name,
+          download_url: url
+        };
+      });
+    }
+  } catch (err) {
+    console.warn('listaConteudo: erro lendo manifest, fallback para API', err);
+  }
+
+  // 2) fallback: GitHub API (com retry leve)
+  const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${contentPath}?ref=${BRANCH}`;
+  let tries = 0;
+  while (tries < 3) {
+    try {
       const res = await fetch(api);
+      if (res.status === 429 || res.status === 403) {
+        // too many requests / rate limit: esperar antes de tentar novamente
+        tries++;
+        await new Promise(r => setTimeout(r, 1000 * Math.pow(2, tries))); // backoff exponencial
+        continue;
+      }
       if (!res.ok) return [];
       const data = await res.json();
       return data.filter(item => item.name && item.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name));
+    } catch (err) {
+      console.warn('listaConteudo: erro na API, tentativa', tries, err);
+      tries++;
+      await new Promise(r => setTimeout(r, 500 * tries));
     }
+  }
+  // se tudo falhou, retorna vazio
+  return [];
+}
 
     // carrega seção genérica
     async function carregarSecao(contentPath, containerSelector) {
