@@ -277,50 +277,60 @@
           cardsContainer.appendChild(card);
         }
 
-        // LISTENER ATUALIZADO: evita player duplicado removendo <video> / <iframe> do HTML gerado
-document.querySelectorAll('a[data-file]').forEach(a => {
-  a.addEventListener('click', async (e) => {
-    e.preventDefault();
-    const dl = e.currentTarget.getAttribute('data-file');
+       // LISTENER GLOBAL: evita duplicação e atende todas as seções (bazar, eventos, etc.)
+document.addEventListener('click', async function(ev) {
+  const a = ev.target.closest && ev.target.closest('a[data-file]');
+  if (!a) return;
+  ev.preventDefault();
+  const dl = a.getAttribute('data-file');
+  try {
     const md = await buscaMarkdown(dl);
     const parsed = parseFrontmatter(md);
 
-    // pega URL do vídeo (se houver)
+    // Limpeza de menções ao vídeo no corpo (evita link textual)
     const videoUrl = parsed.data && (parsed.data.video || parsed.data.video_url) ? (parsed.data.video || parsed.data.video_url).trim() : '';
     const filename = videoUrl ? videoUrl.split('/').pop() : '';
-
-    // --- REMOVER/ESCONDER MENÇÕES AO VÍDEO NO CORPO ---
     if (videoUrl && parsed.body) {
-      // remove ocorrências exatas do URL e do nome do arquivo do corpo markdown
       parsed.body = parsed.body.replace(new RegExp(escapeRegExp(videoUrl), 'g'), '');
       if (filename) parsed.body = parsed.body.replace(new RegExp(escapeRegExp(filename), 'g'), '');
-      // remove links markdown que contenham o URL ou o nome do arquivo [texto](url)
       parsed.body = parsed.body.replace(new RegExp('\\[[^\\]]*\\]\\(\\s*' + escapeRegExp(videoUrl) + '\\s*\\)', 'gi'), '');
       if (filename) parsed.body = parsed.body.replace(new RegExp('\\[[^\\]]*\\]\\([^)]*' + escapeRegExp(filename) + '[^)]*\\)', 'gi'), '');
     }
-    // --- fim limpeza ---
 
-    // converte markdown -> html
+    // converte markdown -> html e remove tags de player já embutidas
     let html = marked.parse(parsed.body || '');
-
-    // REMOVE qualquer <video> ou <iframe> que esteja dentro do markdown convertido
     html = html.replace(/<video[\s\S]*?<\/video>/gi, '');
     html = html.replace(/<iframe[\s\S]*?<\/iframe>/gi, '');
 
-    // SANITIZA LINKS: remove anchors que apontem para arquivos de vídeo ou cujo texto contenha "assistir vídeo"
+    // remove anchors que contenham "assistir vídeo" ou apontem para arquivos de vídeo
     const tmp = document.createElement('div');
     tmp.innerHTML = html;
     tmp.querySelectorAll('a').forEach(aEl => {
       const href = (aEl.getAttribute('href') || '').trim();
       const text = (aEl.textContent || '').trim();
-      // critérios para remoção:
       const textMatch = /(?:assistir|ver)\s*(?:v[ií]deo|video)/i.test(text);
       const hrefVideoExt = /\.(mp4|mov|webm|ogg)(?:[?#].*)?$/i.test(href);
       const hrefContainsFilename = filename && href.includes(filename);
-      if (textMatch || hrefVideoExt || hrefContainsFilename) {
-        aEl.remove();
-      }
+      if (textMatch || hrefVideoExt || hrefContainsFilename) aEl.remove();
     });
+    html = tmp.innerHTML;
+
+    // monta modal usando renderMedia(parsed) para inserir player/imagens
+    const modal = document.createElement('div');
+    modal.style = 'position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto;background:rgba(0,0,0,0.6);padding:30px;z-index:9999;';
+    modal.innerHTML = `<div style="max-width:900px;margin:0 auto;background:#fff;padding:22px;border-radius:10px;position:relative;">
+      <button id="fechar" style="position:absolute;right:14px;top:14px;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;">Fechar</button>
+      <h2 style="color:#1B3A2D">${parsed.data.title || ''}</h2>
+      <p style="color:#2E6B4F;font-weight:700">${parsed.data.date || ''}</p>
+      <div style="margin-top:12px">${renderMedia(parsed)}${html}</div>
+    </div>`;
+    document.body.appendChild(modal);
+    modal.querySelector('#fechar').addEventListener('click', () => modal.remove());
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao abrir o item.');
+  }
+});
     html = tmp.innerHTML;
 
     // monta modal: renderMedia(parsed) adiciona o player (já sem link textual)
