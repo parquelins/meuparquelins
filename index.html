@@ -134,7 +134,7 @@
     function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\\\]\\]/g, '\\$&'); }
 
    // Substitua a função parseFrontmatter existente por esta:
-function parseFrontmatter(md) {
+  function parseFrontmatter(md) {
   const fmRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
   const m = md.match(fmRegex);
   if (!m) return { data: {}, body: md };
@@ -144,28 +144,20 @@ function parseFrontmatter(md) {
   let currentKey = null;
 
   for (let raw of lines) {
-    // Mantemos a indentação original para detectar itens de lista (começam com "-")
-    const trimmed = raw.trim();
-
-    // corresponde a "chave: valor" (pode haver valor vazio => lista a seguir)
     const kv = raw.match(/^\s*([A-Za-z0-9_\-]+)\s*:\s*(.*)$/);
-    // corresponde a "- valor" (item de lista)
     const li = raw.match(/^\s*-\s+(.*)$/);
 
     if (kv) {
       const key = kv[1].trim();
       let val = kv[2] !== undefined ? kv[2].trim() : '';
 
-      // Remove aspas envolventes se existirem
       if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
       if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1, -1);
 
       if (val === '') {
-        // chave sem valor: assume-se que vem uma lista a seguir
         data[key] = [];
         currentKey = key;
       } else {
-        // se valor contém vírgula e não é um array YAML, transforma em array simples
         if (val.indexOf(',') !== -1) {
           data[key] = val.split(',').map(s => s.trim());
         } else {
@@ -174,13 +166,11 @@ function parseFrontmatter(md) {
         currentKey = null;
       }
     } else if (li && currentKey) {
-      // item de lista — adiciona ao array da chave corrente
       let item = li[1].trim();
       if (item.startsWith('"') && item.endsWith('"')) item = item.slice(1, -1);
       if (item.startsWith("'") && item.endsWith("'")) item = item.slice(1, -1);
       data[currentKey].push(item);
     } else {
-      // linha que não é reconhecida (ignorar)
       currentKey = null;
     }
   }
