@@ -7,6 +7,6 @@ video: "/meuparquelins/videos/videofuncional.mp4"
 ---
 Venha participar! melhorar seu condicionamento fisico, mobilidade, tenha mais qualidade de vida, é o projeto verão 2026.
 
-Programa:
-- 19:00 — Início
-- 20:00 — Encerramento
+    Programa:
+    - 19:00 — Início
+    - 20:00 — Encerramento
