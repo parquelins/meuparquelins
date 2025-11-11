@@ -436,7 +436,7 @@ function parseFrontmatter(md) {
   return { data, body: m[2] };
 }
 
-    async function carregarAvisosNaPagina() {
+    async function initCollections(); {
       const cardsContainer = document.querySelector('#avisos .cards');
       if (!cardsContainer) return;
       cardsContainer.innerHTML = '<p>Carregando avisos...</p>';
