@@ -180,49 +180,52 @@
 
     // render media (images in frontmatter or /uploads/..., videos youtube/vimeo/mp4)
     function renderMedia(front) {
-      let html = '';
+  let html = '';
 
-      // imagens frontmatter (image ou images)
-      const imgsField = front.data && (front.data.image || front.data.images) ? (front.data.image || front.data.images) : null;
-      const imgs = imgsField ? (Array.isArray(imgsField) ? imgsField : [imgsField]) : [];
-      imgs.forEach(src => {
-        if (!src) return;
-        html += `<img src="${src}" alt="" style="max-width:100%;margin-bottom:10px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06);" />`;
-      });
+  // 1) imagens explicitamente no frontmatter: image, images ou images (array/string)
+  const imgsField = front.data && (front.data.image || front.data.images) ? (front.data.image || front.data.images) : null;
+  const imgs = imgsField ? (Array.isArray(imgsField) ? imgsField : [imgsField]) : [];
+  imgs.forEach(src => {
+    if (!src) return;
+    html += `<img src="${src}" alt="" style="max-width:100%;margin-bottom:10px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06);" />`;
+  });
 
-      // imagens detectadas no corpo (referências a /uploads/...)
-      const bodyImgs = (front.body.match(/\/uploads\/[^\s)"]+/g) || []);
-      bodyImgs.forEach(m => {
-        html += `<img src="${m}" style="max-width:100%;margin-bottom:10px;border-radius:8px;" />`;
-      });
+  // 2) detectar imagens referenciadas no corpo markdown
+  // pega padrões: /uploads/..., /static/uploads/..., https://raw.githubusercontent.com/..., https://github.com/.../raw/...
+  const bodyImgRegex = /(?:\/uploads\/[^\s)"]+|\/static\/uploads\/[^\s)"]+|https?:\/\/raw\.githubusercontent\.com\/[^\s)"]+|https?:\/\/github\.com\/[^\s)"]+\/raw\/[^\s)"]+|https?:\/\/[^)\s"]+\.(?:png|jpe?g|gif|webp)(?:[?#][^\s"]*)?)/gi;
+  const bodyImgs = (front.body.match(bodyImgRegex) || []);
+  bodyImgs.forEach(m => {
+    if (!m) return;
+    html += `<img src="${m}" style="max-width:100%;margin-bottom:10px;border-radius:8px;" />`;
+  });
 
-      // vídeos: aceita video, video_url ou videos
-      const videosField = front.data && (front.data.video || front.data.video_url || front.data.videos) ? (front.data.video || front.data.video_url || front.data.videos) : null;
-      const videos = videosField ? (Array.isArray(videosField) ? videosField : [videosField]) : [];
-      videos.forEach(videoUrl => {
-        if (!videoUrl) return;
-        let yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/);
-        if (yt && yt[1]) {
-          html += `<div style="margin-top:12px"><iframe src="https://www.youtube.com/embed/${yt[1]}" style="width:100%;max-width:900px;height:400px;border-radius:8px;" frameborder="0" allowfullscreen></iframe></div>`;
-        } else {
-          let vm = videoUrl.match(/vimeo\.com\/(\d+)/);
-          if (vm && vm[1]) {
-            html += `<div style="margin-top:12px"><iframe src="https://player.vimeo.com/video/${vm[1]}" style="width:100%;max-width:900px;height:400px;border-radius:8px;" frameborder="0" allowfullscreen></iframe></div>`;
-          } else {
-            // assume arquivo direto (mp4)
-            html += `
-              <div style="margin-top:12px;max-width:900px;">
-                <video controls preload="none" style="width:100%;height:auto;background:#000;border-radius:6px;">
-                  <source src="${videoUrl}" type="video/mp4">
-                  Seu navegador não suporta vídeo.
-                </video>
-              </div>`;
-          }
-        }
-      });
-
-      return html;
+  // 3) vídeos ( aceita video, video_url ou videos )
+  const videosField = front.data && (front.data.video || front.data.video_url || front.data.videos) ? (front.data.video || front.data.video_url || front.data.videos) : null;
+  const videos = videosField ? (Array.isArray(videosField) ? videosField : [videosField]) : [];
+  videos.forEach(videoUrl => {
+    if (!videoUrl) return;
+    let yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/);
+    if (yt && yt[1]) {
+      html += `<div style="margin-top:12px"><iframe src="https://www.youtube.com/embed/${yt[1]}" style="width:100%;max-width:900px;height:400px;border-radius:8px;" frameborder="0" allowfullscreen></iframe></div>`;
+    } else {
+      let vm = videoUrl.match(/vimeo\.com\/(\d+)/);
+      if (vm && vm[1]) {
+        html += `<div style="margin-top:12px"><iframe src="https://player.vimeo.com/video/${vm[1]}" style="width:100%;max-width:900px;height:400px;border-radius:8px;" frameborder="0" allowfullscreen></iframe></div>`;
+      } else {
+        // arquivo direto (mp4 ou outra extensão suportada pelo <video>)
+        html += `
+          <div style="margin-top:12px;max-width:900px;">
+            <video controls preload="none" style="width:100%;height:auto;background:#000;border-radius:6px;">
+              <source src="${videoUrl}" type="video/mp4">
+              Seu navegador não suporta vídeo.
+            </video>
+          </div>`;
+      }
     }
+  });
+
+  return html;
+}
 
     // lista arquivos markdown numa pasta (usa GitHub API pública)
     async function listaConteudo(contentPath) {
