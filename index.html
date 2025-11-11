@@ -256,6 +256,57 @@
 
       return html;
     }
+    // --- Helpers genéricos para carregar collections ---
+async function listaArquivosEm(path) {
+  const api = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`;
+  const res = await fetch(api);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.filter(item => item.name.endsWith('.md')).sort((a,b) => b.name.localeCompare(a.name));
+}
+
+async function loadCollection(contentPath, containerSelector, cardRenderer) {
+  const container = document.querySelector(containerSelector);
+  if (!container) return;
+  container.innerHTML = '<p>Carregando...</p>';
+  try {
+    const files = await listaArquivosEm(contentPath);
+    if (!files.length) { container.innerHTML = '<p>Nenhum item encontrado.</p>'; return; }
+    container.innerHTML = '';
+    for (const file of files) {
+      const md = await buscaMarkdown(file.download_url);
+      const parsed = parseFrontmatter(md);
+      const cardHtml = cardRenderer(parsed, file);
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = cardHtml;
+      container.appendChild(div);
+    }
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = '<p>Erro ao carregar conteúdo.</p>';
+  }
+}
+
+// Renderers simples
+function cardRendererSimple(parsed, file) {
+  const title = parsed.data.title || file.name.replace('.md','');
+  const date = parsed.data.date || '';
+  const summary = parsed.data.summary || ((parsed.body || '').replace(/\n/g,' ').substring(0,140) + '...');
+  const thumb = parsed.data.image || (parsed.data.images && parsed.data.images[0]) || '';
+  return `<span class="date">${date}</span><h3>${title}</h3>
+    ${thumb ? `<img src="${thumb}" alt="" style="max-width:100%;height:110px;object-fit:cover;border-radius:6px;margin:8px 0;">` : ''}
+    <p>${summary}</p>
+    <p style="margin-top:8px"><a href="#" data-file="${file.download_url}" class="btn btn-small">Ver item</a></p>`;
+}
+
+function cardRendererEvento(parsed, file) {
+  const title = parsed.data.title || file.name.replace('.md','');
+  const date = parsed.data.date || '';
+  const summary = parsed.data.summary || ((parsed.body || '').replace(/\n/g,' ').substring(0,120) + '...');
+  return `<span class="date">${date}</span><h3>${title}</h3><p>${summary}</p>
+    <p style="margin-top:8px"><a href="#" data-file="${file.download_url}" class="btn btn-small">Ver evento</a></p>`;
+}
 
     async function carregarAvisosNaPagina() {
       const cardsContainer = document.querySelector('#avisos .cards');
